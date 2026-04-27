@@ -2,6 +2,14 @@
 - **Instruction**
 - **Subnetting host requirements with DHCP results**
 
+| **Name**      | **Hosts Needed** | **Host Bits** | **Prefix** | **Octet / Increment**     | **Subnet**           | **First Valid IP**     | **Last Valid IP**     | **Broadcast**         | **Next Subnet**       |
+|---------------|------------------|---------------|------------|---------------------------|---------------------|------------------------|-----------------------|-----------------------|------------------------|
+| **BDO VPN**   | 25               | 5 bits        | /27        | 4th octet, 32 increment   | 172.16.0.32 /27     | 172.16.0.33 /27        | 172.16.0.62 /27       | 172.16.0.63 /27       | 172.16.0.64 /27        |
+| **BPI.COM.PH**| 5000             | 13 bits       | /19        | 3rd octet, 32 increment   | 172.16.32.0 /19     | 172.16.32.1 /19        | 172.16.63.254 /19     | 172.16.63.255 /19     | 172.16.64.0 /19        |
+| **PSBANK**    | 6                | 3 bits        | /29        | 4th octet, 8 increment    | 172.16.0.8 /29      | 172.16.0.9 /29         | 172.16.0.14 /29       | 172.16.0.15 /29       | 172.16.0.16 /29        |
+
+
+
 
 ---
 
@@ -103,7 +111,7 @@ VLAN NAME: BPI-VPN
 ```
 Convert to Bits: 13b
 32 - 13 = /19
-Octet/Increment: 3rd, 32i
+Octet/ipasok (Increment): 3rd, 32i
 
 Subnet:        172.16.32.0/19
 1st Valid IP:  172.16.32.1
@@ -205,7 +213,7 @@ ip dhcp excluded-add 172.16.0.9 172.16.0.10
 
 ip dhcp pool PSBANK-VPN
  network 172.16.0.8 255.255.255.248   # network address
- default-router 172.16.0.9            # 1st usable IP
+ default-router 172.16.0.9            # first valid IP
 end
 ```
 
