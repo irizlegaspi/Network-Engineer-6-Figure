@@ -7,7 +7,7 @@ Convert to Bits: 5b
 Subtract: 32-5=/27
 Octet/Inc: 4th, 32i
 Subnet: 172.16.0.32 /27
-1stLast Valid IP: 172.16.0.33 /27
+1st Valid IP: 172.16.0.33 /27
 Last Valid IP: 172.16.0.62 /27
 Broadcast: 172.16.0.63 /27
 Next Subnet: 172.16.0.64 /27
