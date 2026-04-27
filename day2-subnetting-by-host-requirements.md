@@ -1,6 +1,5 @@
 
-- **Instruction**
-- **Subnetting host requirements with DHCP results**
+# ** Instruction: Subnetting host requirements with DHCP results**
 
 | **Name**      | **Hosts Needed** | **Host Bits** | **Prefix** | **Octet / i**    | **Subnet (Yours)**  | **First Valid IP (P)** | **Last Valid IP (B)** | **Broadcast**         | **Next Subnet (Not Yours)** |
 |---------------|------------------|---------------|------------|------------------|---------------------|------------------------|-----------------------|-----------------------|---------------------------- |
