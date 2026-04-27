@@ -20,49 +20,51 @@ Next Subnet: 172.16.0.64 /27
 
 @D1
 --------------
-conf t
-vlan 2
-name BDO-VPN-25WFH
-exit
-!
-int vlan 2
-no shut
-ip add 172.16.0.33 255.255.255.224
-! first Valid IP Address
-exit
-!
-ip dhcp excluded-add 172.16.0.33 172.16.0.37
-ip dhcp pool BDO-VPN-25WFH
-network 172.16.0.32 255.255.255.224
-! network Address
-default-router 172.16.0.33
-! 1st usable Ip
-end
+D1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+D1(config)#vlan 4
+D1(config-vlan)#name PSBANK-VPN-6H-WFH
+D1(config-vlan)#exit
+D1(config)#!
+D1(config)#int vlan 4
+D1(config-if)#no shut
+D1(config-if)#ip add 172.16.0.9 255.255.255.248
+D1(config-if)#! first Valid IP Address
+D1(config-if)#exit
+D1(config)#!
+D1(config)#ip dhcp excluded-add 172.16.0.9 172.16.0.10
+D1(config)#ip dhcp pool PSBANK-VPN
+D1(dhcp-config)#network 172.16.0.8 255.255.255.248
+D1(dhcp-config)#! network Address
+D1(dhcp-config)#default-router 172.16.0.9
+D1(dhcp-config)#! 1st usable Ip
+D1(dhcp-config)#end
 
 
 @A1
 ----------
-conf t
-int e0/0
-no shut
-switchport access vlan 2
-exit
-
-Do BP
+A1#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+A1(config)#int e0/0
+A1(config-if)#no shut
+A1(config-if)#switchport access vlan 2
+A1(config-if)#exit
 
 @P1
 -----------
-conf t
-int e0/0
-no shut
-ip address DHCP
+FINANCE#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+FINANCE(config)#int e0/0
+FINANCE(config-if)#no shut
+FINANCE(config-if)#ip address DHCP
+FINANCE(config-if)#
 !
-Do BP
 exit
 
 FINANCE(config-if)#do bp
 Interface                  IP-Address      OK? Method Status                Protocol
-Ethernet0/0                172.16.0.38     YES DHCP   up                    up   
+Ethernet0/0                172.16.0.38     YES DHCP   up                    up      
+
 
 
 
@@ -84,49 +86,45 @@ Next Subnet: 172.16.64.0 /19
 
 
 @D2
-conf t
-vlan 3
-name BPI-VPN
-exit
-!
-int vlan 3
-no shut
-ip add 172.16.32.1 255.255.224.0
-! first Valid IP Address
-exit
-!
-ip dhcp excluded-add 172.16.32.1 172.16.32.100
-ip dhcp pool BPI-VPN
-network 172.16.32.0 255.255.224.0
-! network Address
-default-router 172.16.32.1
-! 1st usable Ip
-end
+------------
+D2#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+D2(config)#vlan 3
+D2(config-vlan)#name BPI-VPN
+D2(config-vlan)#exit
+D2(config)#!
+D2(config)#int vlan 3
+D2(config-if)#no shut
+D2(config-if)#ip add 172.16.32.1 255.255.224.0
+D2(config-if)#! first Valid IP Address
+D2(config-if)#exit
+D2(config)#!
+D2(config)#ip dhcp excluded-add 172.16.32.1 172.16.32.100
+D2(config)#ip dhcp pool BPI-VPN
+D2(dhcp-config)#network 172.16.32.0 255.255.224.0
+D2(dhcp-config)#! network Address
+D2(dhcp-config)#default-router 172.16.32.1
+D2(dhcp-config)#! 1st usable Ip
+D2(dhcp-config)#end
+
 
 @A2
-conf t
-int e1/0
-no shut
-switchport access vlan 3
-exit
-
-Do BP
+-----
+A2(config)#int e1/0
+A2(config-if)#no shut
+A2(config-if)#switchport access vlan 3
+A2(config-if)#exit
 
 @P2
-conf t
-int e1/0
-no shut
-ip address DHCP
+----------
+IT(config)#int e1/0
+IT(config-if)#no shut
+IT(config-if)#ip address DHCP
 !
-do bp
-exit
-
-RESULTS:
------------------
 IT(config)#do bp
-Interface                  IP-Address      OK? Method Status                Protocol 
+Interface                  IP-Address      OK? Method Status                Protocol
 Ethernet1/0                172.16.32.101   YES DHCP   up                    up 
-
+IT(config-if)#exit
 
 
 
@@ -150,49 +148,41 @@ Next Subnet: 172.16.0.16 /29
 
 @D1
 ---------
-conf t
-vlan 4
-name PSBANK-VPN
-exit
-!
-int vlan 4
-no shut
-ip add 172.16.0.9 255.255.255.248
-! first Valid IP Address
-exit
-!
-ip dhcp excluded-add 172.16.0.9 172.16.0.10
-ip dhcp pool PSBANK-VPN
-network 172.16.0.8 255.255.255.248
-! network Address
-default-router 172.16.0.9
-! 1st usable Ip
-end
+D1(config)#vlan 4
+D1(config-vlan)#name PSBANK-VPN
+D1(config-vlan)#exit
+D1(config)#!
+D1(config)#int vlan 4
+D1(config-if)#no shut
+D1(config-if)#ip add 172.16.0.9 255.255.255.248
+D1(config-if)#! first Valid IP Address
+D1(config-if)#exit
+D1(config)#!
+D1(config)#ip dhcp excluded-add 172.16.0.9 172.16.0.10
+D1(config)#ip dhcp pool PSBANK-VPN
+D1(dhcp-config)#network 172.16.0.8 255.255.255.248
+D1(dhcp-config)#! network Address
+D1(dhcp-config)#default-router 172.16.0.9
+D1(dhcp-config)#! 1st usable Ip
+D1(dhcp-config)#end
 
 
 @D2
 -----------
-conf t
-int e1/0
-no shut
-switchport access vlan 4
-!
-Do BP
+D2(config)#int e1/0
+D2(config-if)#no shut
+D2(config-if)#switchport access vlan 4
+D2(config-if)#exit
 
 
 @S2
 ------------
-conf t
-int e1/0
-no shut
-ip address DHCP
-!
-do bp
-exit
+S2(config)#int e1/0
+S2(config-if)#no shut
+S2(config-if)#ip address DHCP
+S2(config-if)#!
 
 
-RESULTS:
------------------
 S2(config-if)#do bp
 Interface                  IP-Address      OK? Method Status                Protocol
 Ethernet1/0                172.16.0.11     YES DHCP   up                    up 
