@@ -1,0 +1,42 @@
+Assignment: Subnet the following:
+
+======== DAY 2 Subnetting Assignment ============
+
+BDO VPN 25H / 172.16.0.0 /16
+Convert to Bits: 5b
+Subtract: 32-5=/27
+Octet/Inc: 4th, 32i
+Subnet: 172.16.0.32 /27
+1stLast Valid IP: 172.16.0.33 /27
+Last Valid IP: 172.16.0.62 /27
+Broadcast: 172.16.0.63 /27
+Next Subnet: 172.16.0.64 /27
+
+BPI.COM.PH 5000H / 172.16.0.0 /16
+Convert to Bits: 13b
+Subtract: 32-13=/19
+Octet/Inc: 3rd, 32i
+Subnet: 172.16.32.0 /19
+1st: 172.16.32.1 /19
+Lst: 172.16.63.254 /19
+Broadcast: 172.16.63.255 /19
+Next Subnet: 172.16.64.0 /19
+
+PSBANK 6H / 172.16.0.0 /16	
+Convert to Bits: 3b
+Subtract: 32-3=/29
+Octet/Inc: 4th, 8i
+Subnet : 172.16.0.8 /29
+1st Valid IP: 172.16.0.9 /29
+Last Valid IP: 172.16.0.14 /29
+Broadcast: 172.16.0.15 /29
+Next Subnet: 172.16.0.16 /29
+
+
+
+
+
+
+
+
+
