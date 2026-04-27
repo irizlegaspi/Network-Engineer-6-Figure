@@ -7,7 +7,7 @@ BDO VPN - D1, A1, P1
 VPN: 172.16.0.0 /16
 Host: 25
 VLAN: 2
-VLAN NAME:BDO-VPN		
+VLAN NAME:BDO-VPN
 Convert to Bits: 5b
 Subtract: 32-5=/27
 Octet/i: 4th, 32i
