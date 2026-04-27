@@ -1,12 +1,11 @@
-Instruction: Subnet the following by host requirments
+Instruction: Subnet the following by host requirments:
 
 
 ==================================================
-BDO VPN 25H REQUIREMENTS / 172.16.0.0 /16		
+BDO VPN - D1, A1, P1
 ==================================================
-
-DHCP Details:
-BDO VPN 25H / 172.16.0.0 /16
+VPN: 172.16.0.0 /16
+Host: 25
 VLAN: 2
 VLAN NAME:BDO-VPN		
 Convert to Bits: 5b
@@ -20,6 +19,7 @@ Next Subnet: 172.16.0.64 /27
 
 
 @D1
+--------------
 conf t
 vlan 2
 name BDO-VPN-25WFH
@@ -41,6 +41,7 @@ end
 
 
 @A1
+----------
 conf t
 int e0/0
 no shut
@@ -50,6 +51,7 @@ exit
 Do BP
 
 @P1
+-----------
 conf t
 int e0/0
 no shut
@@ -65,12 +67,12 @@ Ethernet0/0                172.16.0.38     YES DHCP   up                    up
 
 
 ==============================================================
-BPI.COM.PH - VPN - P2, A2, D2 / 5000 Host Requirements
+                     BPI VPN - P2, A2, D2
 ==============================================================
-DHCP Details:
+VPN: 172.16.0.0 /16	
+HOST: 5000
 VLAN: 3
-VLAN NAME: BPI-VPN
-BPI.COM.PH 5000H / 172.16.0.0 /16		
+VLAN NAME: BPI-VPN	
 Convert to Bits: 13b
 Subtract: 32-13=/19
 Octet/i: 3rd, 32i
@@ -129,10 +131,12 @@ Ethernet1/0                172.16.32.101   YES DHCP   up                    up
 
 
 ==================================================
-PSBANK - VPN - D2, S2, D1 / 6 Host requirements
+                PSBANK  D2, S2, D1 
 ==================================================
+VPN: 172.16.0.0 /16
+HOST: 6
 VLAN: 4
-VLAN NAME: PSBANK
+VLAN NAME: PSBANK-VPN
 PSBANK 6H / 172.16.0.0 /16		
 Convert to Bits: 3b
 Subtract: 32-3=/29
@@ -143,7 +147,9 @@ Last Valid IP: 172.16.0.14 /29
 Broadcast: 172.16.0.15 /29
 Next Subnet: 172.16.0.16 /29
 
+
 @D1
+---------
 conf t
 vlan 4
 name PSBANK-VPN
@@ -163,7 +169,9 @@ default-router 172.16.0.9
 ! 1st usable Ip
 end
 
+
 @D2
+-----------
 conf t
 int e1/0
 no shut
@@ -171,7 +179,9 @@ switchport access vlan 4
 !
 Do BP
 
+
 @S2
+------------
 conf t
 int e1/0
 no shut
@@ -180,6 +190,12 @@ ip address DHCP
 do bp
 exit
 
+
+RESULTS:
+-----------------
+S2(config-if)#do bp
+Interface                  IP-Address      OK? Method Status                Protocol
+Ethernet1/0                172.16.0.11     YES DHCP   up                    up 
 
 
 
