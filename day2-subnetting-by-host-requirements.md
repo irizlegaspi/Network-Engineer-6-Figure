@@ -54,8 +54,8 @@ exit
 ip dhcp excluded-add 172.16.0.33 172.16.0.37
 
 ip dhcp pool BDO-VPN
- network 172.16.0.32 255.255.255.248   # network address
- default-router 172.16.0.33            # 1st usable IP
+ network 172.16.0.32 255.255.255.224   # network address
+ default-router 172.16.0.33            # first valid IP
 end
 ```
 
