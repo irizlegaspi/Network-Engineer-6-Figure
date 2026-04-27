@@ -42,20 +42,20 @@ Next Subnet:   172.16.0.64/27
 ## **@D1 Configuration**
 ```bash
 conf t
-vlan 4
- name PSBANK-VPN-6H-WFH
+vlan 2
+ name BDO-VPN
 exit
 
-interface vlan 4
+interface vlan 2
  no shut
- ip add 172.16.0.9 255.255.255.248   # first valid IP
+ ip add 172.16.0.33 255.255.255.224   # first valid IP
 exit
 
-ip dhcp excluded-add 172.16.0.9 172.16.0.10
+ip dhcp excluded-add 172.16.0.33 172.16.0.37
 
-ip dhcp pool PSBANK-VPN
- network 172.16.0.8 255.255.255.248   # network address
- default-router 172.16.0.9            # 1st usable IP
+ip dhcp pool BDO-VPN
+ network 172.16.0.32 255.255.255.248   # network address
+ default-router 172.16.0.33            # 1st usable IP
 end
 ```
 
