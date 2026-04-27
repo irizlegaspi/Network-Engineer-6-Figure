@@ -12,6 +12,62 @@ Last Valid IP: 172.16.0.62 /27
 Broadcast: 172.16.0.63 /27
 Next Subnet: 172.16.0.64 /27
 
+@D1
+conf t
+vlan 2
+name BDO-VPN-25WFH
+exit
+!
+int vlan 2
+no shut
+ip add 172.16.0.33 255.255.255.224
+! first Valid IP Address
+exit
+!
+ip dhcp excluded-add 172.16.0.33 172.16.0.37
+ip dhcp pool BDO-VPN-25WFH
+network 172.16.0.32 255.255.255.224
+! network Address
+default-router 172.16.0.33
+! 1st usable Ip
+end
+
+
+@A1
+conf t
+int e0/0
+no shut
+switchport access vlan 2
+exit
+
+Do BP
+
+@P1
+conf t
+int e0/0
+no shut
+ip address DHCP
+!
+Do BP
+exit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 BPI.COM.PH 5000H / 172.16.0.0 /16
 Convert to Bits: 13b
 Subtract: 32-13=/19
