@@ -71,6 +71,38 @@ All subnets are allocated using **largest → smallest** methodology to prevent 
 
 
 
+CIDR: /
+3-dot format:  
+Rivan format: 1st, 16i
+Wildcard (ACL, VPN, FW): 
+
+
+CIDR: /
+3-dot format:  
+Rivan format: 2nd, 16i
+Wildcard (ACL, VPN, FW): 
+
+CIDR: /
+3-dot format:  
+Rivan format: 3rd, 64i
+Wildcard (ACL, VPN, FW): 
+
+
+CIDR: /
+3-dot format:  
+Rivan format: 4th, 4i
+Wildcard (ACL, VPN, FW): 
+
+
+CIDR: /
+3-dot format:  
+Rivan format: 3rd, 4i
+Wildcard (ACL, VPN, FW): 
+
+
+
+
+
 
 
 
