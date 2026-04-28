@@ -54,10 +54,21 @@ All subnets are allocated using **largest → smallest** methodology to prevent 
 
 
 
+## 📘 Subnet Mask Reference Table
+| CIDR | 3‑Dot Subnet Mask | Rivan Format (Octet, i) | Wildcard Mask (ACL/VPN/FW) |
+|------|--------------------|--------------------------|------------------------------|
+| /6   | 252.0.0.0          | 1st, 4i                 | 3.255.255.255                |
+| /11  | 255.224.0.0        | 2nd, 32i                | 0.31.255.255                 |
+| /14  | 255.252.0.0        | 2nd, 4i                 | 0.3.255.255                  |
+| /21  | 255.255.248.0      | 3rd, 8i                 | 0.0.7.255                    |
+| /27  | 255.255.255.224    | 4th, 32i                | 0.0.0.31                     |
+| /30  | 255.255.255.252    | 4th, 4i                 | 0.0.0.3                      |
 
 
-
-
+CIDR:/
+3-dot format: 255.255.255.252 
+Rivan format: 
+Wildcard (ACL, VPN, FW): 
 
 
 
