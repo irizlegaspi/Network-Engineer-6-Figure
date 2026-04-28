@@ -1,52 +1,5 @@
-Subnet the following: 
-Network: 10.0.0.0 /8
 
-Location: Cubao
-Host Needed: 4300
-Convert into Bits: 2^13=8192
-Prefix (NSM subtract): 32-13 = /19 or 255.255.224.0
-Octet, i: 3rd, 32i
-Subnet: 10.0.32.0 /19
-1st Valid IP: 10.0.32.1 /19
-Last Vlaid IP: 10.0.64.254 /19
-Broadcast: 10.0.63.255 /19
-Next Subnet: 10.0.64.0 /19
-
-Location: Cebu
-Host Needed: 2500
-Convert into Bits: 2^12=4096
-Prefix (NSM subtract): 32-12 = /20 or 255.255.240.0
-Octet, i: 3rd, 16i
-Subnet: 10.0.16.0 /19
-1st Valid IP: 10.0.16.1 /20
-Last Vlaid IP: 10.0.21.254 /20
-Broadcast: 10.0.31.255 /20
-Next Subnet: 10.0.32.0 /20
-
-Location: Davao
-Host Needed: 450
-Convert into Bits: 2^9=512
-Prefix (NSM subtract): 32-9 = /23 or 255.255.254.0
-Octet, i: 3rd, 2i
-Subnet: 10.0.2.0 /23
-1st Valid IP: 10.0.2.1 /23
-Last Vlaid IP: 10.0.3.254 /23
-Broadcast: 10.0.3.255 /23
-Next Subnet: 10.0.4.0 /23
-
-
-Location: Siargao
-Host Needed: 220
-Convert into Bits: 2^8=256
-Prefix (NSM subtract): 32-8 = /23 or 255.255.255.0
-Octet, i: 3rd, 1i
-Subnet: 10.0.1.0 /24
-1st Valid IP: 10.0.1.1 /24
-Last Vlaid IP: 10.0.1.254 /24
-Broadcast: 10.0.1.255 /24
-Next Subnet: 10.0.2.0 /24
-
-# VLSM Subnetting Lab — 10.0.0.0/8
+## Accenture - VLSM Subnetting Lab — 10.0.0.0/8
 
 This repository documents the VLSM subnetting design for four branch locations:
 **Cubao, Cebu, Davao, and Siargao**.  
@@ -76,7 +29,32 @@ All subnets are allocated using **largest → smallest** methodology to prevent 
 
 ---
 
-## 🖼 ASCII Network Diagram
+
+
+
+## 📘  Teleperformance WFH Host Needed
+
+
+| Location     | Hosts Needed | Bits           | Prefix | Subnet Mask        | Octet Increment | Subnet            | 1st Valid IP     | Last Valid IP     | Broadcast          | Next Subnet        |
+|--------------|--------------|----------------|--------|---------------------|------------------|--------------------|-------------------|--------------------|---------------------|---------------------|
+| Makati       | 1500         | 2^11 = 2048    | /21    | 255.255.248.0       | 3rd, 8i          | 172.16.8.0/21      | 172.16.8.1        | 172.16.15.254      | 172.16.15.255       | 172.16.16.0/21      |
+| Laguna       | 50           | 2^6 = 64       | /26    | 255.255.255.192     | 4th, 64i         | 172.16.0.64/26     | 172.16.0.65       | 172.16.0.126       | 172.16.0.127        | 172.16.0.128/26     |
+| Quezon City  | 12           | 2^4 = 16       | /28    | 255.255.255.240     | 4th, 16i         | 172.16.0.16/28     | 172.16.0.17       | 172.16.0.30        | 172.16.0.31         | 172.16.0.32/28      |
+
+
+
+
+
+## 📘 TELUS Customer Agents — VLSM Table
+
+| Location | Hosts Needed | Bits           | Prefix | Subnet Mask       | Octet Increment | Subnet        | 1st Valid IP | Last Valid IP | Broadcast      | Next Subnet    |
+|----------|--------------|----------------|--------|--------------------|------------------|----------------|---------------|----------------|-----------------|-----------------|
+| Makati   | 8500         | 2^13 = 8192    | /19    | 255.255.224.0      | 3rd, 32i         | 10.0.32.0/19   | 10.0.32.1     | 10.0.63.254    | 10.0.63.255     | 10.0.64.0/19    |
+| Makati   | 350          | 2^9 = 512      | /23    | 255.255.254.0      | 3rd, 2i          | 10.0.2.0/23    | 10.0.2.1      | 10.0.3.254     | 10.0.3.255      | 10.0.4.0/23     |
+
+
+
+
 
 
 
