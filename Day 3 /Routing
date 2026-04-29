@@ -94,7 +94,7 @@ int e1/0
 switchport mode access
 switchport access vlan 100
 !
-do sh history
+do sh vlan br
 end
 
 
@@ -105,7 +105,7 @@ int e1/0
 switchport mode access
 switchport access vlan 20
 !
-do sh history
+do sh vlan br
 end
 
 
@@ -120,7 +120,7 @@ P1 # ping 10.2.1.102
 3. Default Floating Static Default Route
 ============================================
 
-P1
+@P1
 ---------
 conf t
  ip route 0.0.0.0 0.0.0.0 10.2.1.1
@@ -131,8 +131,7 @@ end
 
 Verify: #sh run | section route
 
-
-S1
+@S1
 ---------
 conf t
  ip route 0.0.0.0 0.0.0.0 192.168.1.129
@@ -141,12 +140,11 @@ end
 
 Verify: 
 #sh run | section route
-Ping VLAN 20 GW: ping 10.2.2.1
-Ping P1: ping 10.2.1.101
-Ping P2: ping 10.2.1.102
-ping 
+@S1 ping VLAN 20 GW: ping 10.2.2.1
+@S1 ping P1: ping 10.2.1.101
 
-P2
+
+@P2
 ---------
 conf t
  ip route 0.0.0.0 0.0.0.0 10.2.1.2 1
@@ -168,10 +166,10 @@ end
 Verify: #sh run | section route
 
 VERIFY: 
-P1 ping 10.2.1.102
+@P1 ping 10.2.1.102
 ! IP Add for P2
 
-P1 ping 10.2.2.133
+@P1 ping 10.2.2.133
 ! IP Add for S2
 
 --------------------
@@ -192,11 +190,25 @@ D1
 conf t
  router eigrp 100
  network 10.2.1.0 0.0.0.255
+ ! VLAN 10
  network 10.2.2.0 0.0.0.255
+ ! VLAN 20
  network 192.168.1.128 0.0.0.31
+ ! VLAN 100
  network 10.1.4.4 0.0.0.3
+ ! 10.1.4.4 - 10.1.4.7 / .5 - .6 =  R4 - e1/0, D1 e1/1
+ ! subnet
  ! no auto-summary
 end
+
+```
+network:
+10.1.4.0 - 10.1.4.3 / .1 - .2
+10.1.4.4 - 10.1.4.7 / .5 - .6 =  R4 - e1/0, D1 e1/1
+10.1.4.8 - 10.1.4.12 /.9 - .11 = R4 - e1/1, D1 e1/1 
+10.1.4.12
+``` 
+
 
 VERIFY:
 sh ip eigrp neighbors
@@ -207,9 +219,13 @@ D2
 conf t
  router eigrp 100
  network 10.2.1.0 0.0.0.255
+ ! VLAN 10
  network 10.2.2.0 0.0.0.255
+ ! VLAN 20
  network 192.168.1.128 0.0.0.31
+ ! VLAN 100
  network 10.1.4.8 0.0.0.3
+ ! 10.1.4.8 - 10.1.4.12 /.9 - .11 = R4 - e1/1, D1 e1/1
  ! no auto-summary
 end
 
@@ -227,7 +243,13 @@ conf t
  ! no auto-summary
 end
 
-
+```
+network:
+10.1.4.0 - 10.1.4.3 / .1 - .2
+10.1.4.4 - 10.1.4.7 / .5 - .6 =  R4 - e1/0, D1 e1/1
+10.1.4.8 - 10.1.4.12 /.9 - .11 = R4 - e1/1, D1 e1/1 
+10.1.4.12
+``` 
 
 ===========================================
 5. OSPF, 6. Point-to-Point, Priority
@@ -235,7 +257,7 @@ end
 
 Verify the IP address first of R4
 
-R4
+@R4
 -------
 VERIFY: the IP address first of R4
 # bp
@@ -254,7 +276,7 @@ end
 VERIFY: sh run | section route
 
 
-R3
+@R3
 --------------------
 VERIFY: the IP address first of R3
 # bp
@@ -274,7 +296,7 @@ end
 VERIFY: sh run | section route
 
 
-R2
+@R2
 --------------------
 VERIFY: the IP address first of R2
 # bp
@@ -294,7 +316,7 @@ end
 
 VERIFY: sh run | section route
 
-R1
+@R1
 --------------------
 VERIFY: the IP address first of R1
 # bp
