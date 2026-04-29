@@ -1,0 +1,167 @@
+
+RealWorldDeployment = 3-4 year
+
+@D1
+conf t
+vlan 11
+name 1500-WFH
+exit
+!
+int vlan 11
+no shut
+ip add 172.16.8.1 255.255.248.0
+exit
+!
+ip dhcp excluded-add 172.16.8.1 172.16.8.100
+ip dhcp pool 1500WFH
+network 172.16.8.0 255.255.248.0
+default-router 172.16.8.1
+end
+
+@A1
+conf t
+int e0/0
+no shut
+switchport access vlan 11
+exit
+
+Do BP
+
+@P2
+conf t
+int e0/0
+no shut
+ip address DHCP
+
+Do BP
+
+
+
+
+################## D1. A2, p2 ##########################
+
+
+@D1
+conf t
+vlan 6
+name 50-WFH
+exit
+!
+int vlan 6
+no shut
+ip add 172.16.0.65 255.255.255.192
+exit
+!
+ip dhcp excluded-add 172.16.0.65 172.16.0.69
+ip dhcp pool 50WFH
+network 172.16.0.64 255.255.255.192
+default-router 172.16.0.65
+end
+
+@A2
+conf t
+int e1/0
+no shut
+switchport access vlan 6
+do sh vlan br
+exit
+
+Do BP
+
+@P2
+conf t
+int e1/0
+no shut
+ip address DHCP
+
+Do BP
+
+
+
+
+
+TASK 4 Real World Ddesign and Implemetation: ITSM. Network Design
+D1, D2,S2
+
+ACCENTURE.COM 10.0.0.0./8
+8500 CALLCENTER AGENTS
+CS
+
+@D1
+conf t
+vlan 14
+name AccentureVLAN
+exit
+!
+int vlan 14
+no shut
+ip add 10.0.64.1 255.255.192.0
+exit
+!
+ip dhcp excluded-add 10.0.64.1 10.0.64.100
+ip dhcp pool 8500-ACCENTUREVLAN
+network 10.0.64.0 255.255.192.0
+default-router 10.0.64.1
+end
+
+@D2
+conf t
+int e1/0
+no shut
+switchport access vlan 14
+do sh vlan br
+exit
+
+Do BP
+
+@S2
+conf t
+int e1/0
+no shut
+ip address DHCP
+
+Do BP
+
+
+
+
+TELUS ======== 350 Call Centers
+10.0.0.8/8 / VLAN 9
+
+@D1
+conf t
+vlan 9
+name TELUS
+exit
+!
+int vlan 9
+no shut
+ip add 10.0.2.1 255.255.254.0
+! 1st usable IP Address
+exit
+!
+ip dhcp excluded-add 10.0.2.1 10.0.2.100
+ip dhcp pool TELUS
+network 10.0.2.0 255.255.254.0
+!network address
+default-router 10.0.2.1
+! 1st usable IP Address  
+end
+
+@A1
+conf t
+int e0/0
+no shut
+switchport access vlan 9
+do sh vlan br
+exit
+
+Do BP
+
+@P1
+conf t
+int e0/0
+no shut
+ip address DHCP
+
+Do BP
