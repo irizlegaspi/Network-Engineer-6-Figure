@@ -1,1 +1,189 @@
+DAY 1 Home Lab
+http://192.168.182.128/laboratories.php
+01 - RSTvX-IPv4
+
+
+==================================================
+1. Configure D1 & D2 as DHCP server for VLAN 10
+==================================================
+IP Address range for DHCP client:
+D1: .100-.199
+
+----------
+D1 - configure load balancing
+----------
+
+conf t
+ ip dhcp excluded-address 10.2.1.1 10.2.1.99
+ ip dhcp excluded-address 10.2.1.200 10.2.1.254
+!
+ ip dhcp pool MGMTPOOL
+ network 10.2.1.0 255.255.255.0
+ default-router 10.2.1.1
+ dns-server 10.2.1.1
+ domain-name MGMT.COM
+ end
+
+IP Address range for DHCP client
+D2: .200 -.254
+
+
+
+----------
+D2 - configure load balancing
+----------
+
+conf t
+ ip dhcp excluded-address 10.2.1.1 10.2.1.199
+!
+ ip dhcp pool MGMTPOOL
+ network 10.2.1.0 255.255.255.0
+ default-router 10.2.1.2
+ dns-server 10.2.1.2
+ domain-name MGMT.COM
+ end
+
+
+
+
+==================================================
+2. Configure P1 and P2 as DHCP Client for their VLANS
+==================================================
+
+Verify on A1 before they can get their IP at DHCP Server
+# sh vlan br
+
+Assigned switchport to A1 Switch
+
+----------
+A1 
+----------
+conf t
+ int e0/0
+  switchport mode access
+  switchport access vlan 10
+  end
+
+Verify: # sh vlan br
+
+
+
+
+----------
+A2 
+----------
+conf t
+ int e1/0
+  switchport mode access
+  switchport access vlan 10
+  end
+
+Verify: # sh vlan br
+
+
+=============================
+Configure PC as DHCP Client
+=============================
+
+-------
+P1
+-------
+conf t
+ int e0/0
+  no shut
+  ip add dhcp
+  end
+
+Verify: 
+# sh ip int br
+# sh ip int br | exclude unna
+
+----------
+P2
+----------
+conf t
+ int e1/0
+  no shut
+  ip add dhcp
+  end
+
+Verify: 
+# sh ip int br
+
+
+
+
+
+
+
+
+
+
+====================================
+Configure DHCP Server for VLAN 100
+====================================
+
+
+---------------
+D1 -- VLAN 100
+---------------
+
+conf t
+ ip dhcp pool SERVERPOOL
+  network 192.168.1.128 255.255.255.224
+  default-router 192.168.1.129
+  dns-server 192.168.1.129
+  domain-name SERVER.COM
+exit
+int e1/0
+ switchport mode access
+ switchport access vlan 100
+end
+
+
+---------------
+D2 -- VLAN 20
+---------------
+
+conf t
+ ip dhcp pool DNSPOOL
+  network 10.2.2.0 255.255.255.0
+  default-router 10.2.2.2
+  dns-server 10.2.2.2
+  domain-name DNS.COM
+exit
+int e1/0
+ switchport mode access
+ switchport access vlan 20 
+end
+
+
+
+
+===============================
+Configure S1 & S2 as DHCP Client
+=================================
+
+
+------------
+S1
+----------
+conf t
+ int e1/0
+  no shut
+  ip add dhcp
+end
+
+
+=======
+S2
+========
+conf t
+ int e1/0
+  no shut
+  ip add dhcp
+end
+
+
+
 
