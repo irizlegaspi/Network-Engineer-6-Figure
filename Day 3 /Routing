@@ -1,1 +1,575 @@
 
+DAY 3 Assignment
+NAME: IRIZ LEGASPI
+INSTRUCTION:
+1. Open the RSTHAYUP VM
+2. Access the http://192.168.182.128/laboratories.php
+3. Telnet thee port provided in RST using SecureCRT
+
+
+
+============================================
+1. Assign IP Address on P1, P2, S1, S2
+===========================================
+   P1 = 10.2.1.101 /24
+   P2 = 10.2.1.102 /24
+   S1 = 192.168.1.133 /27
+   S2 = 10.2.2.133 /24
+
+
+P1
+------------------
+en
+conf t
+int e0/0
+ip add 10.2.1.101 255.255.255.0
+no shut
+end
+
+
+P2
+------------------
+en
+conf t
+int e1/0
+ip add 10.2.1.102 255.255.255.0
+no shut
+end
+
+
+S1
+------------------
+en
+conf t
+int e1/0
+ip add 192.168.1.133 255.255.255.224
+no shut
+end
+
+
+
+S2
+------------------
+en
+conf t
+int e1/0
+ip add 10.2.2.133 255.255.255.0
+no shut
+end
+
+
+====================================
+2. Assign them to the correct VLANs
+====================================
+
+A1
+----------
+conf t
+int e0/0
+switchport mode access
+switchport access vlan 10
+!
+do sh history
+end
+
+
+A2
+----------
+conf t
+int e1/0
+switchport mode access
+switchport access vlan 10
+!
+do sh history
+end
+
+
+D1
+----------
+conf t
+int e1/0
+switchport mode access
+switchport access vlan 100
+!
+do sh history
+end
+
+
+D2
+----------
+conf t
+int e1/0
+switchport mode access
+switchport access vlan 20
+!
+do sh history
+end
+
+
+Verify the VLAN on A1 and A2
+sh vlan br
+
+Testing the connection between P1 and P2 - must be successful
+P1 # ping 10.2.1.102 
+
+
+============================================
+3. Default Floating Static Default Route
+============================================
+
+P1
+---------
+conf t
+ ip route 0.0.0.0 0.0.0.0 10.2.1.1
+  ! gateway VLAN 10 - D1 - Primary default static route
+ ip route 0.0.0.0 0.0.0.0 10.2.1.2 10
+  ! gateway VLAN 10 - D2 - Secondary default static route
+end
+
+Verify: #sh run | section route
+
+
+S1
+---------
+conf t
+ ip route 0.0.0.0 0.0.0.0 192.168.1.129
+  ! gateway VLAN 100 - D1 - Primary default static route
+end
+
+Verify: 
+#sh run | section route
+Ping VLAN 20 GW: ping 10.2.2.1
+Ping P1: ping 10.2.1.101
+Ping P2: ping 10.2.1.102
+ping 
+
+P2
+---------
+conf t
+ ip route 0.0.0.0 0.0.0.0 10.2.1.2 1
+! Gateway VLAN 10 - D2 - Primary
+ ip route 0.0.0.0 0.0.0.0 10.2.1.1 10
+! Gateway VLAN 10 - D1 - secondary
+end
+
+VERIFY: 
+sh run | section route
+
+S2
+---------
+conf t
+ ip route 0.0.0.0 0.0.0.0 10.2.2.2 
+! Gateway VLAN 20 - D2
+end
+
+Verify: #sh run | section route
+
+VERIFY: 
+P1 ping 10.2.1.102
+! IP Add for P2
+
+P1 ping 10.2.2.133
+! IP Add for S2
+
+--------------------
+P1 = 10.2.1.101 /24
+P2 = 10.2.1.102 /24
+S1 = 192.168.1.133 /27
+S2 = 10.2.2.133 /24
+N = 10.1.46.4 /30  
+---------------------------
+
+
+============================================
+4. EIGRP
+============================================
+
+D1
+-----
+conf t
+ router eigrp 100
+ network 10.2.1.0 0.0.0.255
+ network 10.2.2.0 0.0.0.255
+ network 192.168.1.128 0.0.0.31
+ network 10.1.4.4 0.0.0.3
+ ! no auto-summary
+end
+
+VERIFY:
+sh ip eigrp neighbors
+
+
+D2
+---------
+conf t
+ router eigrp 100
+ network 10.2.1.0 0.0.0.255
+ network 10.2.2.0 0.0.0.255
+ network 192.168.1.128 0.0.0.31
+ network 10.1.4.8 0.0.0.3
+ ! no auto-summary
+end
+
+VERIFY:
+sh ip eigrp neighbors
+
+
+
+R4
+---------
+conf t
+ router eigrp 100
+ network 10.1.4.4 0.0.0.3
+ network 10.1.4.8 0.0.0.3
+ ! no auto-summary
+end
+
+
+
+===========================================
+5. OSPF, 6. Point-to-Point, Priority
+============================================
+
+Verify the IP address first of R4
+
+R4
+-------
+VERIFY: the IP address first of R4
+# bp
+
+conf t
+ int e1/2
+ ip ospf network point-to-point
+exit
+!
+ router ospf 1 
+ router-id 4.4.4.4
+ network 4.4.4.4 0.0.0.0 area 0
+ network 10.1.1.8 0.0.0.3 area 0
+end
+
+VERIFY: sh run | section route
+
+
+R3
+--------------------
+VERIFY: the IP address first of R3
+# bp
+
+conf t
+int e1/2
+ ip ospf network point-to-point
+exit
+!
+ router ospf 1
+ router-id 3.3.3.3
+ network 3.3.3.3 0.0.0.0 area 0
+ network 10.1.1.8 0.0.0.3 area 0
+ network 10.1.1.4 0.0.0.3 area 0
+end
+
+VERIFY: sh run | section route
+
+
+R2
+--------------------
+VERIFY: the IP address first of R2
+# bp
+
+conf t
+int e1/2
+ ip ospf priority 255
+exit
+!
+ router ospf 1
+ router-id 2.2.2.2
+ network 2.2.2.2 0.0.0.0 area 0
+ network 10.1.1.4 0.0.0.3 area 0
+ network 10.1.1.0 0.0.0.3 area 0
+end
+
+
+VERIFY: sh run | section route
+
+R1
+--------------------
+VERIFY: the IP address first of R1
+# bp
+
+conf t
+int e1/0
+ ip ospf priority 0
+exit
+!
+ router ospf 1
+ router-id 1.1.1.1
+ network 1.1.1.1 0.0.0.0 area 0
+ network 10.1.1.0 0.0.0.3 area 0
+ network 209.9.9.0 0.0.0.255 area 0
+ network 208.8.8.0 0.0.0.255 area 0
+ network 207.7.7.0 0.0.0.255 area 0
+end
+
+VERIFY: sh run | section route
+
+
+VERIFY if configuration is correct:
+R3 - sh ip ospf neighbor
+- Pri:1 Neigh: 2.2.2.2 State: FULL/BDR
+- Pri:0 Neigh: 4.4.4.4 State: FULL/- (P2P connection)
+
+R2 - sh ip ospf neighbor 
+- Pri:1 Neigh: 3.3.3.3 State: FULL/DR
+- Pri:0 Neigh: 1.1.1.1 State: FULL/DROTHER
+
+R1 - sh ip ospf neighbor 
+- Pri:255 Neigh: 2.2.2.2 State: FULL/DR
+
+
+
+
+
+
+
+
+
+
+
+========================================
+7. BGP
+=========================================
+
+R1 = AS-1
+-----------
+conf t
+ router bgp 1
+ bgp log-neighbor-changes
+ neighbor 209.9.9.3 remote-as 3
+ neighbor 207.7.7.2 remote-as 2
+ neighbor 208.8.8.4 remote-as 45
+! AS #45 Google & Converge
+!
+address-family ipv4
+ neighbor 209.9.9.3 activate
+ neighbor 207.7.7.2 activate
+ neighbor 208.8.8.4 activate
+!
+! specify network 
+ network 209.9.9.0 mask 255.255.255.0 
+ network 207.7.7.0 mask 255.255.255.0
+ network 208.8.8.0 mask 255.255.255.0
+end
+
+VERIFY: 
+sh bgp summary
+sh ip route bgp
+
+
+I2 - PLDT AS-2
+---------------
+conf t
+ router bgp 2
+ bgp log-neighbor-changes
+ neighbor 32.3.2.3 remote-as 3
+ neighbor 25.2.5.5 remote-as 45
+ neighbor 24.2.4.4 remote-as 45
+ neighbor 207.7.7.1 remote-as 1
+!
+address-family ipv4
+ neighbor 32.3.2.3 activate
+ neighbor 25.2.5.5 activate
+ neighbor 24.2.4.4 activate
+ neighbor 207.7.7.1 activate
+!
+! specify network
+ network 22.22.22.22 mask 255.255.255.255 
+ network 32.3.2.0 mask 255.255.255.0
+ network 25.2.5.0 mask 255.255.255.0
+ network 24.2.4.0 mask 255.255.255.0
+ network 207.7.7.0 mask 255.255.255.0
+end
+
+VERIFY: 
+sh bgp summary
+sh ip route bgp
+
+
+ 45 - GOOGLE-DNS
+-------------------
+conf t
+ router bgp 45
+ bgp log-neighbor-changes
+ neighbor 35.3.5.3 remote-as 3
+ neighbor 25.2.5.2 remote-as 2
+ neighbor 45.4.5.4 remote-as 45
+!
+address-family ipv4
+ neighbor 35.3.5.3 activate
+ neighbor 25.2.5.2 activate
+ neighbor 45.4.5.4 activate
+!
+! specify network 
+ network 55.55.55.55 mask 255.255.255.255
+ network 8.8.8.8 mask 255.255.255.255
+ network 35.3.5.0 mask 255.255.255.0 
+ network 25.2.5.0 mask 255.255.255.0
+ network 45.4.5.0 mask 255.255.255.0
+ 
+ 
+end
+
+
+VERIFY: 
+sh bgp summary
+sh ip route bgp
+
+
+
+
+I3 - GLOBE
+-----------
+conf t
+ router bgp 3
+ bgp log-neighbor-changes
+ neighbor 209.9.9.1 remote-as 1
+ neighbor 32.3.2.2 remote-as 2
+ neighbor 35.3.5.5 remote-as 45
+!
+address-family ipv4
+ neighbor 209.9.9.1 activate
+ neighbor 32.3.2.2 activate
+ neighbor 35.3.5.5 activate
+!
+! specify network 
+ network 209.9.9.0 mask 255.255.255.0 
+ network 32.3.2.0 mask 255.255.255.0
+ network 35.3.5.0 mask 255.255.255.0
+ network 33.33.33.33 mask 255.255.255.255
+end
+
+VERIFY: 
+sh bgp summary
+sh ip route bgp
+
+
+
+
+I1 - CONVERGE
+-----------
+conf t
+ router bgp 45 
+ bgp log-neighbor-changes
+ neighbor 45.4.5.5 remote-as 45
+ neighbor 24.2.4.2 remote-as 2
+ neighbor 208.8.8.1 remote-as 1
+!
+address-family ipv4
+ neighbor 45.4.5.5 activate
+ neighbor 24.2.4.2 activate
+ neighbor 208.8.8.1 activate
+!
+! specify network 
+ network 45.4.5.0 mask 255.255.255.0 
+ network 24.2.4.0 mask 255.255.255.0
+ network 208.8.8.0 mask 255.255.255.0
+ network 44.44.44.44 mask 255.255.255.255
+end
+
+VERIFY: 
+sh bgp summary
+sh ip route bgp
+
+
+
+==============================================
+8. Redistribute Routes
+============================================
+R4
+------
+conf t 
+ router ospf 1
+ redistribute eigrp 100 subnets
+ exit
+
+ router eigrp 100
+ redistribute ospf 1 metric 10000 100 255 1 1500
+ ! BW - DLY - Reliability - LOAD -  MTU
+end
+
+VERIFY: 
+R4: sh int e1/0
+-  look at MTU, Delay, reliability, BW and load
+
+
+After pasting the Redistribute command at R4, Verify
+D1: sh ip route - there should be external EIGRP
+R1: sh ip route - there should be external OSPF
+
+
+
+R1
+-----------
+conf t
+ router ospf 1
+ default-information originate always
+end
+
+
+VERIFY GW:
+R2: sh ip route GW: 10.1.1.1
+R3: sh ip route GW: 10.1.1.5
+R4: sh ip route GW: 10.1.1.9
+D1: sh ip route GW: 10.1.4.5
+
+
+==========================================
+9. NAT
+==========================================
+STATIC NAT
+P1 = 209.9.9.10
+P2 = 209.9.9.20
+S1 = 207.7.7.10
+S2 = 208.8.8.10
+
+
+
+R1
+-----
+conf t
+int range e1/1-3
+ ip nat outside
+!
+int e1/0
+ ip nat inside
+!
+ access-list 1 permit 10.0.0.0 0.255.255.255
+! 10.0.0.0 - 10.255.255.255
+ access-list 1 permit 172.16.0.0 0.15.255.255
+! 172.16.0.0 - 172.31.255.255
+ access-list 1 permit 192.168.0.0 0.0.0.255
+! 192.168.0.0 - 192.168.255.255
+!
+ ip nat inside source static 10.2.1.101 209.9.9.10
+ ip nat inside source static 10.2.1.102 209.9.9.20
+ ip nat inside source static 192.168.1.133 207.7.7.10
+ ip nat inside source static 10.2.2.133 208.8.8.10
+!
+! port address translation
+!
+ip nat inside source list 1 int e1/2 overload
+end
+
+VERIFY: 
+R1: sh ip nat translations
+
+P1: ping 8.8.8.8 ! should be successful
+P2: ping 8.8.8.8 ! should be successful
+S1: ping 8.8.8.8 ! should be successful
+S2: ping 8.8.8.8 ! should be successful
+
+R1: sh ip nat trans
+
+
+
+
+
