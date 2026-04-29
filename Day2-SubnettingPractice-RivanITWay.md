@@ -457,3 +457,45 @@ Hex rolls over the same way decimal does — just in base‑16 instead of base�
 
 
 
+## CIDR, subnet mask, and prefix length all describe the **same thing**, just in different formats. They always match each other mathematically, and none of them can contradict the others.
+
+---
+
+### How they relate  
+- **CIDR** is the slash notation: `/24`, `/19`, `/30`, etc.  
+- **Prefix length** is the same number without the slash: `24 bits`, `19 bits`, `30 bits`.  
+- **Subnet mask** is the dotted‑decimal version of those bits:  
+  - `/24` → `255.255.255.0`  
+  - `/19` → `255.255.224.0`  
+  - `/30` → `255.255.255.252`
+
+All three are just different representations of the same mask.
+
+---
+
+### Quick reference  
+- More bits in CIDR/prefix → larger subnet mask → fewer hosts  
+- Fewer bits → smaller subnet mask → more hosts  
+
+---
+
+### Example  
+If you say:
+
+- CIDR: **/21**  
+- Prefix: **21 bits**  
+- Subnet mask: **255.255.248.0**
+
+These three are **identical** in meaning.
+
+---
+
+If you want, I can check your entire table again to ensure every CIDR, mask, and Rivan format is consistent.
+
+
+
+
+
+
+
+
