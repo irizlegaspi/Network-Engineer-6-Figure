@@ -435,5 +435,25 @@ Hex rolls over the same way decimal does — just in base‑16 instead of base�
 
 
 
+## Practice Bits:
+
+```markdown
+
+195  =   8b    = 2^8  = 256
+13   =   4b    = 2^4  = 16
+1750 =   11b   = 2^11 = 2048
+212  =   9b    = 2^9  = 256 
+
+
+```
+
+
+
+
+
+
+
+
+
 
 
