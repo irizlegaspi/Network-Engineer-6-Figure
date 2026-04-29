@@ -1,1 +1,542 @@
+CCNA D4 Assignment - IRIZ LEGASPI
+
+https://www.youtube.com/watch?v=IPhXMHBxmFw
+https://www.youtube.com/watch?v=bNbLPWhVkmc
+
+-------------
+R4
+-------------
+
+conf t
+ int e3/3
+  ip add 208.8.8.11 255.255.255.0
+  ip add 208.8.8.12 255.255.255.0 secondary
+  no shut
+  exit
+ !
+ int e0/1
+  ip add 10.11.11.1 255.255.255.224
+  no shut
+ !
+ int e0/3
+  ip add 10.1.2.10 255.255.255.252
+  no shut
+ !
+ ip route 0.0.0.0 0.0.0.0 208.8.8.2
+ !
+ router ospf 1
+  router-id 4.4.4.4 
+  network 4.4.4.4 0.0.0.0 area 0
+  network 208.8.8.0 0.0.0.255 area 0
+  network 10.11.11.0 0.0.0.31 area 0
+  network 10.1.2.8  0.0.0.3 area 0
+  network 10.1.1.8 0.0.0.3 area 0
+  passive-interface e0/1
+ end
+~~~
+
+
+==============
+!@R3
+==============
+conf t
+ int e0/3
+  ip add 10.1.2.9 255.255.255.252
+  no shut
+ exit
+ !
+ int e0/1
+  ip add 10.22.22.1 255.255.255.224
+  no shut
+ exit
+ !
+ router ospf 1
+  router-id 3.3.3.3
+  network 3.3.3.3 0.0.0.0 area 0
+  network 10.1.2.8 0.0.0.3 area 0
+  network 10.1.1.8 0.0.0.3 area 0
+  network 10.22.22.0 0.0.0.31 area 0
+  passive-interface e0/1
+exit
+!
+ip domain name R3.COM
+ crypto key generate rsa modulus 2048
+ ip ssh version 2
+ username admin priv 15 secret pass
+ line vty 0 4
+  transport input all
+  login local
+  exit
+!
+line vty 0 4
+  transport input all
+  login local
+end
+!
+
+~~~
+
+
+
+~~~
+!@P1
+conf t
+ hostname FINANCE
+ int e0/1
+  no shut
+  ip add 10.11.11.11 255.255.255.224
+  ip add 10.11.11.12 255.255.255.224 secondary
+ !
+ ip route 0.0.0.0 0.0.0.0 10.11.11.1
+ exit
+!
+ip domain name FINANCE.COM
+ crypto key generate rsa modulus 2048
+ ip ssh version 2
+ username admin priv 15 secret pass
+ line vty 0 4
+  transport input all
+  login local
+  exit
+!
+line vty 0 4
+  transport input all
+  login local
+end
+!
+
+~~~
+
+
+
+===============
+!@P2
+===============
+conf t
+ hostname IT
+ int e0/1
+  no shut
+  ip add 10.22.22.21 255.255.255.224
+  ip add 10.22.22.22 255.255.255.224 secondary
+ !
+ ip route 0.0.0.0 0.0.0.0 10.22.22.1
+ exit
+!
+conf t
+ip domain name IT.COM
+ crypto key generate rsa modulus 2048
+ ip ssh version 2
+ username admin priv 15 secret pass
+!
+ line vty 0 4
+  transport input all
+  login local
+exit
+end
+!
+~~~
+
+
+
+
+### Make R4 Vulnerable
+
+~~~
+!@R4
+config t
+ ip domain name R4.COM
+ crypto key generate rsa modulus 2048
+ ip ssh version 2
+ username admin priv 15 secret pass
+ line vty 0 4
+  transport input all
+  login local
+  exit
+ ip host www.bet11.com 208.8.8.11
+ ip host www.bet12.com 208.8.8.12
+ ip host www.bet100.com 208.8.8.100
+ service finger
+ service tcp-small-servers
+ service udp-small-servers
+ ip dns server
+ ip http server
+ ip http secure-server
+ telephony-service
+  no auto-reg-ephone
+  max-ephones 5
+  max-dn 20
+  ip source-address 208.8.8.11 port 2000
+  exit
+ voice service voip
+  allow-connections h323 to sip
+          
+  allow-connections sip to h323
+  allow-connections sip to sip
+  supplementary-service h450.12
+ sip
+   bind control source-interface e3/3
+   bind media source-interface e3/3
+   registrar server expires max 600 min 60
+ voice register global
+  mode cme
+  source-address 208.8.8.11 port 5060 secondary 208.8.8.12
+  max-dn 12
+  max-pool 12
+  authenticate register
+  create profile sync syncinfo.xml
+  end
+~~~
+============================================================================
+### 1. Using a STANDARD ACL, prevent FINANCE from Remotely Accessing R4
+- Make sure the STANDARD ACL uses the highest number identifier.
+
+R4
+-----
+conf t
+ip access-list standard 1999
+deny  10.11.11.0 0.0.0.31
+permit any
+exit
+!
+VERIFY: sh users
+! to see the number of virtual lines for every users that can remotely connect
+sh run | s line
+!
+line vty 0 4
+access-class 1999 in
+end
+
+Test: 
+from P1 ping the ip address of R4, we need to block the virtual line
+telnet 4.4.4.4 ! this is open while the acl is not applied
+
+
+=============================================================
+EXTENDED ACL
+### 2. Create an ACL that will prevent FINANCE from
+- Sending PINGs outside of FINANCE
+- Prevent Accessing R3 via TELNET
+- Allow only P1-12 (10.11.11.12) to PING R3 on its loopback interface
+ 
+! Extended ACL is best applied closest to the source ( next hop interface)
+
+
+------------
+R4
+----------
+conf t
+ip access-list extended FWP-FIN
+ permit icmp host 10.11.11.12 host 3.3.3.3 log
+! or another way to type this command
+! permit icmp 10.11.11.12 0.0.0.0 (0.0.0.0 measn /32)
+ deny icmp 10.11.11.0 0.0.0.31 any log
+! any entries from FINANCE will be logged, output logged will go to R4-Logs
+ permit ip any any
+
+! Apply to interface
+---------------------
+conf t
+int e0/1
+ip access-group FWP_FIN in
+exit
+
+
+
+
+
+
+
+---------
+R3
+----------
+conf t
+ip access-list extended FWP-VTY
+deny tcp 10.11.11.0 0.0.0.31 any eq 23 log
+permit ip any any
+! 
+line vty 0 4
+access-class FWP-VTY in
+! (VTY uses class)
+end
+
+
+
+VERIFY:
+Finance ping 4.4.4.4 - must be denied
+Finance ping R3: pin 10.1.1.9 - must be denied
+Finance ping 3.3.3.3 source 10.11.11.12 - should be successful, this is permit
+Finance ping 3.3.3.3 source 10.11.11.11 - should be unsuccessful, this is deny, unreachable
+
+
+
+==============================================================================
+### 3. Modify the ACL on R4 without removing existing entries in the ACL, 
+to allow IT to PING and TELNET FINANCE but not the other way around.
+
+VERIFY R4 ACL
+sh ip access-list int e0/1
+
+R4
+---------
+conf t
+ip access-list extended FWP-FIN
+15 permit icmp 10.11.11.0 0.0.0.31 10.22.22.0 0.0.0.31 echo-reply log
+24 permit tcp 10.11.11.0 0.0.0.31 10.22.22.0 0.0.0.31 eq 23 established log
+25 deny tcp 10.11.11.0 0.0.0.31 10.22.22.0 0.0.0.31 eq 23 log
+end
+
+
+TEST:
+GO TO IT
+ping 10.11.11.11 ! must be successful
+ping 10.11.11.12 ! must be successful
+
+telnet 10.11.11.11 ! must be successful
+telnet 10.11.11.11 ! must be successful
+
+
+TEST:
+GO TO FINANCE
+ping 10.22.22.21 ! must be unsuccessful
+ping 10.22.22.22 ! must be unsuccessful
+
+telnet 10.22.22.21 ! must be denied
+telnet 10.22.22.22 ! must be denied
+
+===================================================================
+### 4. Allow the Following Ports on R4's e3/3 interface
+- www.bet11.com  : FTP, SIP, MySQL NTP, TELNET
+- www.bet12.com  : IMAPS, POP3S, SUBMISSION, SMTPS
+- www.bet100.com : 
+
+In your computer go to Win R, add this host file in your directory
+c:\Windows\system32\drivers\etc\hosts
+add these additional entries and save
+
+208.8.8.11 www.bet11.com
+208.8.8.12 www.bet12.com
+208.8.8.100 www.bet100.com
+
+R4: sh run | s 3/3 
+! verify a the given domain that is mapped to the R4 e3/3 ip address
+! add the "208.8.8.100 www.bet100.com" to R4
+
+
+Open your CMD
+C:\> ping www.bet11.com
+(another tab) 
+c:\>UsersAdministrator>cd /
+c:\>ping www.bet12.com
+c:\>nmap -v www.bet11.com
+
+DO ACL Permit only specific ports
+Apply on R4
+
+R4
+----------
+conf t
+ip access-list extended FWP-R4
+permit tcp any host www.bet11.com eq 21 log
+permit tcp any host www.bet11.com eq 5060 log
+permit tcp any host www.bet11.com eq 3306 log
+permit udp any host www.bet11.com eq 123 log
+permit tcp any host www.bet11.com eq 23 log
+!
+permit tcp any host www.bet12.com eq 993 log
+permit tcp any host www.bet12.com eq 995 log
+permit tcp any host www.bet12.com eq 587 log
+permit tcp any host www.bet12.com eq 465 log
+exit
+
+! Apply to interface attached to PC
+
+int e3/3
+ip access-group FWP-R4 in
+end
+
+VERIFY:
+sh run | s access
+
+
+! Check NMAP
+open CMD
+c:\> nmap -sU --min-rate 1000 www.bet11.com 
+! for UDP
+
+
+c:\> nmap -sU --min-rate 1000 www.bet11.com 
+ ! check also bet 12 TCP ports should be closed
+465 smtps
+587 submission
+993 imaps
+995 pop3s
+ntp is opened
+
+
+
+
+===========================================
+
+### 5. Setup R4 as a Proxy for the ff:
+- IT-11 : 80  > www.bet100.com : 8080
+- IT-11 : 443 > www.bet100.com : 8443
+
+- IT-12 : 80  > www.bet100.com : 80
+- IT-12 : 443 > www.bet100.com : 443
+
+
+P2
+---
+
+verify the http:
+! if the web server is enable is P2
+no ip http server
+no ip http secure-server
+exit 
+
+conf t
+ip http server
+ip http secure-server
+! To enable web server on P2
+exit 
+
+
+R4 - must act as proxy
+------------------------
+conf t
+telnet 10.22.22.20 80
+telnet 10.22.22.20 443
+! should be opened
+! type HTTP to get out
+exit
+
+conf t
+in e3/3
+ip nat outside 
+int range e0/1, e0/3, e1/2
+ip nat inside
+exit
+!
+ip access-list extended NAT-POL
+permit ip 10.22.22.0 0.0.0.31 208.8.8.0 0.0.0.255
+exit
+!
+ip nat inside source list NAT-POL int  e3/3 overload
+exit
+!
+ip nat inside source static tcp 10.22.22.21 80 208.8.8.100 8080
+ip nat inside source static tcp 10.22.22.21 443 208.8.8.100 8443
+!
+ip nat inside source static tcp 10.22.22.22 80 208.8.8.10 80
+ip nat inside source static tcp 10.22.22.22 443 208.8.8.10 443
+end
+
+Verify:
+Open CMD
+type c:\> nmap -v www.bet100.com
+! does not show due to the ACL
+! Verify the ACL at R4 
+sh ip access-lists int e3/3
+! Modify the ACL get the name: FWP-R4 
+
+
+
+
+R4
+-----
+
+conf t
+ip access-list extended FWP-R4
+permit tcp any host www.bet100.comn eq 80 log
+permit tcp any host www.bet100.comn eq 8080 log
+permit tcp any host www.bet100.comn eq 8443 log
+permit tcp any host www.bet100.comn eq 443 log
+
+
+! Open log at R4 Logs
+and do the NMAP at CMD
+bet:11 c:\>nmap -v www.bet11.com
+bet12: ping www.bet12.com
+bet100: c:\>nmap -v www.bet100.com
+
+
+R4: sh run | s nat
+ping 10.22.22.21
+
+Go to P2: sh ip int br
+add the ip address for int e0/1 secondary
+
+
+P2
+------
+conf t
+int e0/1
+ip address 10.22.22.21 255.255.255.224 secondary
+exit
+
+verify: sh run | s int
+
+
+NMAP at CMD
+c:\>nmap -v www.bet100.com
+results:
+Port	 state	service
+80/tcp   open	http
+443/tcp	 open	https
+8080/tcp open	http-proxy
+8443/tcp open	https-al
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
