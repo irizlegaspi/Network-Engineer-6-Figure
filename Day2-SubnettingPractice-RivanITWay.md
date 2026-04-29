@@ -91,17 +91,347 @@ All subnets are allocated using **largest → smallest** methodology to prevent 
 | /32  | 255.255.255.255    | 4th, 1i                 | 0.0.0.0                      |
 
 
+## Address‑conversion reference (decimal → binary/hex → IPv4/IPv6)
+
+| DEC | BIN-SUM | HEX |
+|-----|---------|-----|
+| 1   | 0       | 1   |
+| 2   | 128     | 2   |
+| 3   | 192     | 3   |
+| 4   | 224     | 4   | A
+| 5   | 240     | 5   | B
+| 6   | 248     | 6   | C
+| 7   | 252     | 7   | D
+| 8   | 254     | 8   | E
+| 9   | 255     | 9   | F
+
+
+| Decimal | IPv4 Range | IPv6 Range |
+|---------|------------|------------|
+| 0–9     | 0–255      | 0–9, a–f   |
+
+## 7.x.x.x rollover
+| Decimal | IPv4             | IPv6  |
+|---------|------------------|-------|
+| 7999    | 7.255.255.255    | 7FFF  |
+| 8000    | 8.0.0.0          | 8000  |
+| 8001    | 8.0.0.1          | 8001  |
+
+| Decimal | IPv4             | IPv6  |
+|---------|------------------|-------|
+| 7898    | 7.254.255.254    | 7EFE  |
+| 7899    | 7.254.255.255    | 7EFF  |
+| 7900    | 7.255.0.0        | 7F00  |
+
+## 3.x.x.x rollover
+| Decimal | IPv4             | IPv6  |
+|---------|------------------|-------|
+| 3908    | 3.255.0.254      | 3F0E  |
+| 3909    | 3.255.0.255      | 3F0F  |
+| 3910    | 3.255.1.0        | 3F10  |
+
+## 5.x.x.x rollover
+
+| Decimal | IPv4             | IPv6  |
+|---------|------------------|-------|
+| 5098    | 5.0.255.254      | 50FE  |
+| 5099    | 5.0.255.255      | 50FF  |
+| 5100    | 5.1.0.0          | 5100  |
+
+
+| Decimal | IPv4             | IPv6  |
+|---------|------------------|-------|
+| 5098    | 5.0.255.254      | 50FE  |
+| 5099    | 5.0.255.255      | 50FF  |
+| 5100    | 5.1.0.0          | 5100  |
+
+
+## 2.x.x.x rollover
+| Decimal | IPv4             | IPv6  |
+|---------|------------------|-------|
+| 2899    | 2.254.255.255    | 2EFF  |
+| 2900    | 2.255.0.0        | 2F00  |
+| 2901    | 2.255.0.1        | 2F01  |
 
 
 
 
+##
+
+255 becomes **FF** and 254 becomes **FE** because IPv6 uses **hexadecimal (base‑16)**, not decimal (base‑10).  
+Hex digits go from **0 to F**, where **A–F represent 10–15**.
+
+---
+
+## How the translation actually works
+
+### Hexadecimal digit values  
+Hex digits:
+
+```
+0 1 2 3 4 5 6 7 8 9 A B C D E F
+```
+
+Their decimal equivalents:
+
+```
+0–9 = 0–9
+A = 10
+B = 11
+C = 12
+D = 13
+E = 14
+F = 15
+```
+
+---
+
+## Why 255 → FF
+
+255 in decimal converted to hex:
+
+1. Divide 255 by 16  
+   - 255 ÷ 16 = 15 remainder 15  
+2. 15 in hex = **F**  
+3. Remainder 15 = **F**
+
+So:
+
+```
+255 decimal = FF hex
+```
+
+---
+
+## Why 254 → FE
+
+254 ÷ 16 = 15 remainder 14  
+- 15 → F  
+- 14 → E  
+
+So:
+
+```
+254 decimal = FE hex
+```
+
+---
+
+## Quick pattern  
+Decimal → Hex:
+
+- 255 → **FF**
+- 254 → **FE**
+- 253 → **FD**
+- 252 → **FC**
+- 251 → **FB**
+- 250 → **FA**
+- 249 → **F9**
+- 248 → **F8**
+
+This is why your IPv6 column increments like:
+
+```
+... F9, FA, FB, FC, FD, FE, FF, 100, 101 ...
+```
+
+It’s just a counter in base‑16.
+
+---
+
+If you want, I can show the same conversions in binary so you can see the rollover visually.
+
+
+
+Hex and binary line up cleanly because both are **base‑2 systems**, just grouped differently.  
+Seeing 254 → **11111110₂** → **FE₁₆** makes the rollover obvious.
+
+---
+
+## Binary → Hex mapping  
+Hex digits are just **4‑bit binary chunks**:
+
+```
+Binary     Hex
+0000       0
+0001       1
+0010       2
+0011       3
+0100       4
+0101       5
+0110       6
+0111       7
+1000       8
+1001       9
+1010       A
+1011       B
+1100       C
+1101       D
+1110       E
+1111       F
+```
+
+---
+
+## Why 255 → FF (binary view)
+
+255 decimal:
+
+```
+255 = 11111111₂
+```
+
+Group into 4‑bit chunks:
+
+```
+1111   1111
+  F      F
+```
+
+So:
+
+```
+255₁₀ = FF₁₆
+```
+
+---
+
+## Why 254 → FE (binary view)
+
+254 decimal:
+
+```
+254 = 11111110₂
+```
+
+Group into 4‑bit chunks:
+
+```
+1111   1110
+  F      E
+```
+
+So:
+
+```
+254₁₀ = FE₁₆
+```
+
+---
+
+## Why the IPv6 counter rolls like this
+
+When your IPv6 column increments:
+
+```
+... F9, FA, FB, FC, FD, FE, FF, 100, 101 ...
+```
+
+That’s because:
+
+- **F** is the highest hex digit (15)
+- After **FF**, the next number is **100** (just like 99 → 100 in decimal)
+
+Binary makes this clear:
+
+```
+FF  = 1111 1111
+100 = 0001 0000 0000
+```
+
+It’s the same rollover behavior as IPv4 octets, just in base‑16 instead of base‑10.
+
+---
+
+If you want, I can show the same rollover using your actual examples (3908, 5099, 5899, etc.) so you can see the binary → IPv4 → IPv6 alignment step by step.
 
 
 
 
+A decimal‑to‑hex conversion always follows the same computation:  
+divide by **16**, multiply back, subtract, then translate the remainder into a hex digit.  
+Your example for **255 → FF** is correct, and here it is in clean GitHub‑ready format.
+
+---
+
+## Decimal → Hex conversion (step‑by‑step)
+
+```markdown
+### Convert 255 (decimal) to hexadecimal
+
+1. Divide by 16  
+   255 ÷ 16 = 15 remainder 15
+
+2. Multiply the quotient  
+   15 × 16 = 240
+
+3. Subtract  
+   255 − 240 = 15
+
+4. Convert remainder to hex  
+   15 = F
+
+5. Convert quotient to hex  
+   15 = F
+
+### Final:
+255 (decimal) = FF (hex)
+```
+
+---
+
+If you want, I can add 254 → FE and 253 → FD using the same computation style.
 
 
+Your breakdown is correct — 255 becomes **FF** and 254 becomes **FE** because the binary groups map cleanly into hexadecimal. Here is your explanation rewritten cleanly in GitHub‑ready format, preserving your exact logic.
 
+---
+
+## Decimal → Binary → Hex (GitHub format)
+
+```markdown
+### 255 (decimal → binary → hex)
+
+To Binary:
+128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 = 255
+
+Binary grouping (4 bits each):
+8 4 2 1   8 4 2 1
+1 1 1 1   1 1 1 1
+
+Left 4 bits  = 1111 = 15 = F  
+Right 4 bits = 1111 = 15 = F  
+
+**255 → FF**
+```
+
+---
+
+```markdown
+### 254 (decimal → binary → hex)
+
+To Binary:
+128 + 64 + 32 + 16 + 8 + 4 + 2 + 0 = 254
+
+Binary grouping (4 bits each):
+8 4 2 1   8 4 2 1
+1 1 1 1   1 1 1 0
+
+Left 4 bits  = 1111 = 15 = F  
+Right 4 bits = 1110 = 14 = E  
+
+**254 → FE**
+```
+
+---
+
+This is the exact reason your IPv6 column increments like:
+
+```
+... F9, FA, FB, FC, FD, FE, FF, 100, 101 ...
+```
+
+Hex rolls over the same way decimal does — just in base‑16 instead of base‑10.
 
 
 
