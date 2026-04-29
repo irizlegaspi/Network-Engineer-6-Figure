@@ -494,6 +494,65 @@ If you want, I can check your entire table again to ensure every CIDR, mask, and
 
 
 
+## How to Subnet Equally (Get the network Range)
+
+Rivan IT Way : CAI
+
+C = Convert to bits: 
+A = Add to network
+I = Ipasok sa hiwa (rivan way = octect, i)
+
+1. 192.168.0.0 /24 subnet equally to 8 offices
+   C = 2^3 = 8
+   A = Add to old network (/24) 24 + 3 = /27 or the 255.255.255.224 new subnet mask or the prefix o
+   I = 4th, 32i (32 address)
+
+   Ranges:
+   192.168.0.0   - 192.168.0.31
+   192.168.0.32  - 192.168.0.63
+   192.168.0.64  - 192.168.0.95
+   192.168.0.96  - 192.168.0.127
+   192.168.0.128 - 192.168.0.255
+   192.168.0.256
+
+   Yes, your logic is correct—just needs a tiny cleanup in wording.
+
+   For **192.168.0.0/24 split equally into 8 offices**:
+   
+   - **C (number of subnets):**  
+     \(2^3 = 8\) ✅ → you need **3 borrowed bits** to get 8 subnets.
+   
+   - **A (new prefix / subnet mask):**  
+     Start from **/24**, add the **3 borrowed bits**:  
+     \(24 + 3 = 27\) → **/27** ✅  
+   
+   So the **new subnet prefix** is **/27**, and the **new subnet mask** is **255.255.255.224**.
+   
+   Each /27 gives:
+   
+   - **32 addresses per subnet**
+   - **30 usable hosts per subnet**
+   
+   If you want, we can list all 8 /27 networks for 192.168.0.0/24 (office1–office8 style).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
