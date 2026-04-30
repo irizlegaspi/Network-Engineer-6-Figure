@@ -275,7 +275,9 @@ exit
  network 10.1.1.8 0.0.0.3 area 0
 end
 
-VERIFY: sh run | section route
+VERIFY: 
+sh run | section route
+sh ip ospf neighbor
 
 
 @R3
@@ -295,8 +297,9 @@ exit
  network 10.1.1.4 0.0.0.3 area 0
 end
 
-VERIFY: sh run | section route
-
+VERIFY: 
+sh run | section route
+sh ip ospf neighbor
 
 @R2
 --------------------
@@ -316,8 +319,9 @@ exit
 end
 
 
-VERIFY: sh run | section route
-
+VERIFY: 
+sh run | section route
+sh ip ospf neighbor
 @R1
 --------------------
 VERIFY: the IP address first of R1
