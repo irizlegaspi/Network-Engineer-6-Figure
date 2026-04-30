@@ -370,7 +370,7 @@ R1 - sh ip ospf neighbor
 7. BGP
 =========================================
 
-R1 = AS-1
+@R1 = AS-1
 -----------
 conf t
  router bgp 1
@@ -396,7 +396,7 @@ sh bgp summary
 sh ip route bgp
 
 
-I2 - PLDT AS-2
+@I2 - PLDT AS-2
 ---------------
 conf t
  router bgp 2
@@ -425,7 +425,7 @@ sh bgp summary
 sh ip route bgp
 
 
- 45 - GOOGLE-DNS
+@GOOGLE-DNS - AS#45
 -------------------
 conf t
  router bgp 45
@@ -445,8 +445,6 @@ address-family ipv4
  network 35.3.5.0 mask 255.255.255.0 
  network 25.2.5.0 mask 255.255.255.0
  network 45.4.5.0 mask 255.255.255.0
- 
- 
 end
 
 
@@ -454,10 +452,7 @@ VERIFY:
 sh bgp summary
 sh ip route bgp
 
-
-
-
-I3 - GLOBE
+@I3 - GLOBE
 -----------
 conf t
  router bgp 3
@@ -482,10 +477,7 @@ VERIFY:
 sh bgp summary
 sh ip route bgp
 
-
-
-
-I1 - CONVERGE
+@I1 - CONVERGE
 -----------
 conf t
  router bgp 45 
@@ -515,13 +507,13 @@ sh ip route bgp
 ==============================================
 8. Redistribute Routes
 ============================================
-R4
+@R4
 ------
 conf t 
  router ospf 1
  redistribute eigrp 100 subnets
  exit
-
+!
  router eigrp 100
  redistribute ospf 1 metric 10000 100 255 1 1500
  ! BW - DLY - Reliability - LOAD -  MTU
@@ -538,7 +530,8 @@ R1: sh ip route - there should be external OSPF
 
 
 
-R1
+! Default Route Propagation
+@R1
 -----------
 conf t
  router ospf 1
@@ -547,10 +540,10 @@ end
 
 
 VERIFY GW:
-R2: sh ip route GW: 10.1.1.1
-R3: sh ip route GW: 10.1.1.5
-R4: sh ip route GW: 10.1.1.9
-D1: sh ip route GW: 10.1.4.5
+R2: sh ip route GW: 10.1.1.1 /
+R3: sh ip route GW: 10.1.1.5 /
+R4: sh ip route GW: 10.1.1.9 /
+D1: sh ip route GW: 10.1.4.5 /
 
 
 ==========================================
@@ -581,9 +574,13 @@ int e1/0
 ! 192.168.0.0 - 192.168.255.255
 !
  ip nat inside source static 10.2.1.101 209.9.9.10
+ ! P1 = 209.9.9.10
  ip nat inside source static 10.2.1.102 209.9.9.20
+ ! P2 = 209.9.9.20
  ip nat inside source static 192.168.1.133 207.7.7.10
+ ! S1 = 207.7.7.10
  ip nat inside source static 10.2.2.133 208.8.8.10
+ ! S2 = 208.8.8.10
 !
 ! port address translation
 !
