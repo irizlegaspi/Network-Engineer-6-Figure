@@ -1,25 +1,95 @@
 
-Tasl #3 Subnet the PLDT 2001:4455:9299::/48 into 1024 offices
+Task #3 Subnet the PLDT 2001:4455:9299::/48 into 1024 offices
 Process:
 C - Convert the bits: 2^10 = 1024
 A - Add the CIDR: /48 + 10 =  /58
 I - 4i, 3rd --> 8 4 2 1 --> 10 bits 4 + 4 + 2(4i)
                 1 2 3 4 --> octet
 Offices: 
-2001:4455:9299:0000
-2001:4455:9299:0040
-2001:4455:9299:0080
-2001:4455:9299:00C0
-2001:4455:9299:0100
-2001:4455:9299:0140
-2001:4455:9299:0180
-2001:4455:9299:01C0
-2001:4455:9299:0200
-2001:4455:9299:0240
-2001:4455:9299:0280
-2001:4455:9299:02C0
-2001:4455:9299:0300
-2001:4455:9299:0340
-2001:4455:9299:0380
-2001:4455:9299:03C0
+1st 20 subnets:
+2001:4455:9299:0000::/58
+2001:4455:9299:0040::/58
+2001:4455:9299:0080::/58
+2001:4455:9299:00C0::/58
+2001:4455:9299:0100::/58
+2001:4455:9299:0140::/58
+2001:4455:9299:0180::/58
+2001:4455:9299:01C0::/58
+2001:4455:9299:0200::/58
+2001:4455:9299:0240::/58
+2001:4455:9299:0280::/58
+2001:4455:9299:02C0::/58
+2001:4455:9299:0300::/58
+2001:4455:9299:0340::/58
+2001:4455:9299:0380::/58
+2001:4455:9299:03C0::/58
+2001:4455:9299:0400::/58
+2001:4455:9299:0440::/58
+2001:4455:9299:0480::/58
+2001:4455:9299:04C0::/58
+
+Last Subnets:
+2001:4455:9299:FE40::/58
+2001:4455:9299:FE80::/58
+2001:4455:9299:FEC0::/58
+2001:4455:9299:FF00::/58
+2001:4455:9299:FF40::/58
+2001:4455:9299:FF80::/58
+2001:4455:9299:FFC0::/58
+
+
+
+Great question — let’s break this down carefully.
+
+### Step 1: Base subnet
+You’re starting with **2001:4455:9299::/48**.  
+A `/48` means you have 16 bits available for subnetting (from the 4th hextet onward).
+
+### Step 2: Required number of subnets
+You want **1024 offices**.  
+1024 = 2^10
+So you need **10 bits** for subnetting.
+
+That means your new subnet size will be:
+/48 + 10 = /58
+
+So each office gets a **/58 subnet**.
+
+### Step 3: Increment size
+A `/58` leaves 6 bits for host addressing in the 4th hextet.  
+That means each subnet increments by **0x40 (decimal 64)** in the 4th hextet.
+
+So the sequence goes:
+
+- 2001:4455:9299:0000::/58  
+- 2001:4455:9299:0040::/58  
+- 2001:4455:9299:0080::/58  
+- 2001:4455:9299:00C0::/58  
+- … and so on.
+
+### Step 4: Where it stops
+Since you have 1024 subnets, the last one will be:
+
+\[
+1024 \times 0x40 = 0x10000
+\]
+
+But because the 4th hextet is only 16 bits, the maximum value is `FFFF`.  
+So the last subnet is:
+
+**2001:4455:9299:FFC0::/58**
+
+### ✅ Final Answer
+Your office subnets run from:
+
+- **2001:4455:9299:0000::/58**  
+up to  
+- **2001:4455:9299:FFC0::/58**
+
+That gives exactly **1024 /58 subnets**.
+
+---
+
+Would you like me to lay out the **first 20 and last 20 subnets** in a neat list so you can double-check the pattern?
+
 
