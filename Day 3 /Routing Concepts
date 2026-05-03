@@ -1,1 +1,34 @@
+STATIC ROUTE
+
+
+R3#sh ip int br | ex una
+Interface                  IP-Address      OK? Method Status                Protocol
+Ethernet1/1                10.1.1.6        YES TFTP   up                    up      
+Ethernet1/2                10.1.1.9        YES TFTP   up                    up      
+Loopback3                  3.3.3.3         YES TFTP   up                    up   
+
+#sh ip route
+#sh ip route connected - mga kalye/network
+sh ip route Local - bahay
+
+10.1.1.4/30 --> ip route 10.1.1.4 255.255.255.252 null 0
+10.1.1.8/30 --> ip route 10.1.1.8 255.255.255.252 null 0
+172.16.50.5/20 --> ip route 172.16.48.0 255.255.240.0 null 0
+192.168.1.100 /27 --> ip route 192.168.1.96 255.255.255.224 null 0
+
+
+
+EIGRP: CISCO
+router eigrp 100
+network 10.1.1.4 0.0.0.3 
+network 172.16.48.0 0.0.15.255
+network 192.168.1.96 0.0.0.31
+
+OSPF
+router ospf 1
+network 10.1.1.4 0.0.0.3 area 0
+network 172.16.48.0 0.0.15.255 area 0
+network 192.168.1.96 0.0.0.31 area 0
+
+
 
