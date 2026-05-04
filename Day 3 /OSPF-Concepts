@@ -1,1 +1,15 @@
+OSPF packets
 
+1. Hello Header Packets
+  R - Router Id
+  A - Area Id
+  S - Subnet Mask
+  A - Authentication
+
+2. Timer
+  - Hello Timer = 10s
+  - Dead Interval = 40s
+
+3. Designation
+  DR - Designated Router
+  BDR Backup-Designated Router
