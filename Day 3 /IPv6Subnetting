@@ -40,8 +40,11 @@ Ex.
 7bits (16-7=9)  = 2nd, 2i
 8bits (16-8=8)  = 1st, 1i
 
-or you can deduct the OSM-NSM (prefix)
-Ex. /48 - /53 = 5 bits ==> 2nd,8i
+or you can deduct the OSM-NSM (prefix) ==> count the bits from 1st octet to 4th
+Ex.
+OSM - NSM = Bits Borrowed 
+/48 - /53 = 5 bits ==>  2nd,8i (4 1 0 0)
+/64 - /75 = 11 bits ==> 2nd,2i (4 4 3 0)
 
 
 
