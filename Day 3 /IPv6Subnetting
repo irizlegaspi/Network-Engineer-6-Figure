@@ -28,19 +28,20 @@ Bit labels →   15  14  13  12      11  10   9   8        7   6   5   4        
 Hex weights →   8   4   2   1       8   4   2   1        8   4   2   1        8   4   2   1
               └───────────────┘   └───────────────┘    └───────────────┘    └───────────────┘
 Process:
-                      1st  2nd  3rd  4th
-5bits = 2nd, 8i ==>   4    1(8) 0    0
-7bits = 2nd, 2i ==>   4    3(2) 0    0
-8bits = 1st, 1i ==>   4    4(1) 0    0
+                    1st  2nd  3rd  4th
+5bits = 2nd, 8i ==> 4    1(8) 0    0
+7bits = 2nd, 2i ==> 4    3(2) 0    0
+8bits = 1st, 1i ==> 4    4(1) 0    0
   
 other way: so if  i have 6 bits borrowed: 16-6 = 10, count from 0 to 10 bits: 0000 0100 0000 0000 or 0400 and my increment is 4.
 2nd, 4i
 Ex.
 5bits (16-5=11) = 2nd, 8i
 7bits (16-7=9)  = 2nd, 2i
-8bits (16-8=8) = 1st, 1i
+8bits (16-8=8)  = 1st, 1i
 
-
+or you can deduct the OSM-NSM (prefix)
+Ex. /48 - /53 = 5 bits ==> 2nd,8i
 
 
 
