@@ -539,6 +539,7 @@ conf t
 end
 
 
+
 VERIFY GW:
 R2: sh ip route GW: 10.1.1.1 /
 R3: sh ip route GW: 10.1.1.5 /
