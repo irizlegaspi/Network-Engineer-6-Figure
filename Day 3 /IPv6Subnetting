@@ -1,10 +1,105 @@
+IPV6 Decimal(0-9) - Binary (0-15) - Hex (0-9, A-F)
+Here you go, nice and compact:
 
-Task #3 Subnet the PLDT 2001:4455:9299::/48 into 1024 offices
+| Hex | Decimal | Binary    |
+|-----|---------|-----------|
+| 0   | 0       | 0000      |
+| 1   | 1       | 0001      |
+| 2   | 2       | 0010      |
+| 3   | 3       | 0011      |
+| 4   | 4       | 0100      |
+| 5   | 5       | 0101      |
+| 6   | 6       | 0110      |
+| 7   | 7       | 0111      |
+| 8   | 8       | 1000      |
+| 9   | 9       | 1001      |
+| A   | 10      | 1010      |
+| B   | 11      | 1011      |
+| C   | 12      | 1100      |
+| D   | 13      | 1101      |
+| E   | 14      | 1110      |
+| F   | 15      | 1111      |
+
+For determining the placement of octet and increment of IPv6:
+
+                1st HEX DIGIT        2nd HEX DIGIT        3rd HEX DIGIT        4th HEX DIGIT
+              ┌───────────────┐   ┌───────────────┐    ┌───────────────┐    ┌───────────────┐
+Bit labels →   15  14  13  12      11  10   9   8        7   6   5   4        3   2   1   0
+Hex weights →   8   4   2   1       8   4   2   1        8   4   2   1        8   4   2   1
+              └───────────────┘   └───────────────┘    └───────────────┘    └───────────────┘
+Process:
+                      1st  2nd  3rd  4th
+5bits = 2nd, 8i ==>   4    1(8) 0    0
+7bits = 2nd, 2i ==>   4    3(2) 0    0
+8bits = 1st, 1i ==>   4    4(1) 0    0
+  
+other way: so if  i have 6 bits borrowed: 16-6 = 10, count from 0 to 10 bits: 0000 0100 0000 0000 or 0400 and my increment is 4.
+2nd, 4i
+Ex.
+5bits (16-5=11) = 2nd, 8i
+7bits (16-7=9)  = 2nd, 2i
+8bits (16-8=8) = 1st, 1i
+
+
+
+
+
+
+
+
+====================================================================
+
+TASK #1 Subnet the network 2001:FD8:2F2::/48 into 32 offices
+C - Convert the bits: 2^5 = 32
+A - Add to CIDR (osm+bits): /48 + 5 =  /53 new prefix
+I - 2nd octet, 8i --> (4th hextet because of /48) --> 16-5= 11=0800
+
+Offices:
+01  2001:4455:9299:0000::/53
+02  2001:4455:9299:0800::/53
+03  2001:4455:9299:1000::/53
+04  2001:4455:9299:1800::/53
+05  2001:4455:9299:2000::/53
+06  2001:4455:9299:2800::/53
+07  2001:4455:9299:3000::/53
+08  2001:4455:9299:3800::/53
+09  2001:4455:9299:4000::/53
+10  2001:4455:9299:4800::/53
+11  2001:4455:9299:5000::/53
+12  2001:4455:9299:5800::/53
+13  2001:4455:9299:6000::/53
+14  2001:4455:9299:6800::/53
+15  2001:4455:9299:7000::/53
+16  2001:4455:9299:7800::/53
+17  2001:4455:9299:8000::/53
+18  2001:4455:9299:8800::/53
+19  2001:4455:9299:9000::/53
+20  2001:4455:9299:9800::/53
+21  2001:4455:9299:A000::/53
+22  2001:4455:9299:A800::/53
+23  2001:4455:9299:B000::/53
+24  2001:4455:9299:B800::/53
+25  2001:4455:9299:C000::/53
+26  2001:4455:9299:C800::/53
+27  2001:4455:9299:D000::/53
+28  2001:4455:9299:D800::/53
+29  2001:4455:9299:E000::/53
+30  2001:4455:9299:E800::/53
+31  2001:4455:9299:F000::/53
+32  2001:4455:9299:F800::/53
+ 
+
+
+
+
+====================================================================
+
+Task #2 Subnet the PLDT 2001:4455:9299::/48 into 1024 offices
 Process:
 C - Convert the bits: 2^10 = 1024
 A - Add the CIDR: /48 + 10 =  /58
-I - 4i, 3rd --> 8 4 2 1 --> 10 bits 4 + 4 + 2(4i)
-                1 2 3 4 --> octet
+I - 4i, 3rd --> (4th hex)
+             
 Offices: 
 1st 20 subnets:
 2001:4455:9299:0000::/58
@@ -38,21 +133,15 @@ Last Subnets:
 2001:4455:9299:FFC0::/58
 
 
-
-Great question — let’s break this down carefully.
-
 ### Step 1: Base subnet
 You’re starting with **2001:4455:9299::/48**.  
 A `/48` means you have 16 bits available for subnetting (from the 4th hextet onward).
 
 ### Step 2: Required number of subnets
-You want **1024 offices**.  
-1024 = 2^10
+You want **1024 offices**.  1024 = 2^10
 So you need **10 bits** for subnetting.
 
-That means your new subnet size will be:
-/48 + 10 = /58
-
+That means your new subnet size will be: /48 + 10 = /58
 So each office gets a **/58 subnet**.
 
 ### Step 3: Increment size
@@ -60,7 +149,6 @@ A `/58` leaves 6 bits for host addressing in the 4th hextet.
 That means each subnet increments by **0x40 (decimal 64)** in the 4th hextet.
 
 So the sequence goes:
-
 - 2001:4455:9299:0000::/58  
 - 2001:4455:9299:0040::/58  
 - 2001:4455:9299:0080::/58  
@@ -70,9 +158,8 @@ So the sequence goes:
 ### Step 4: Where it stops
 Since you have 1024 subnets, the last one will be:
 
-\[
-1024 \times 0x40 = 0x10000
-\]
+1024 x 0x40 = 0x10000
+
 
 But because the 4th hextet is only 16 bits, the maximum value is `FFFF`.  
 So the last subnet is:
@@ -80,16 +167,45 @@ So the last subnet is:
 **2001:4455:9299:FFC0::/58**
 
 ### ✅ Final Answer
-Your office subnets run from:
-
-- **2001:4455:9299:0000::/58**  
-up to  
-- **2001:4455:9299:FFC0::/58**
-
+Your office subnets run from: 
+- **2001:4455:9299:0000::/58**  up to  - **2001:4455:9299:FFC0::/58**
 That gives exactly **1024 /58 subnets**.
 
----
 
-Would you like me to lay out the **first 20 and last 20 subnets** in a neat list so you can double-check the pattern?
+
+====================================================================
+TASK #3 Subnet the network 2001:FD8:750::/48 into 64 offices
+Network : 2001:FD8:750::/48
+C-Convert to bits 2^6 = 64
+A - Add to subnet mask (osm+bits)= /48 + 6 = /54
+I- i-finger (octet, inc): 2nd, 4i (16-6=10, count the placement of octet and increment from 0 to 15)
+
+Offices:
+2001:FD8:750:0000::/54
+2001:FD8:750:0400::/54
+2001:FD8:750:0800::/54
+2001:FD8:750:0C00::/54
+2001:FD8:750:1000::/54
+2001:FD8:750:1400::/54
+2001:FD8:750:1800::/54
+2001:FD8:750:1C00::/54
+2001:FD8:750:2000::/54
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
