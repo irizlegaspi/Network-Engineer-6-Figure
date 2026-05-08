@@ -322,6 +322,8 @@ end
 VERIFY: 
 sh run | section route
 sh ip ospf neighbor
+
+
 @R1
 --------------------
 VERIFY: the IP address first of R1
