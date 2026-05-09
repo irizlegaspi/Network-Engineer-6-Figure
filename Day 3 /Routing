@@ -537,7 +537,7 @@ R1: sh ip route - there should be external OSPF
 -----------
 conf t
  router ospf 1
- default-information originate always
+ default-information originate
 end
 
 
