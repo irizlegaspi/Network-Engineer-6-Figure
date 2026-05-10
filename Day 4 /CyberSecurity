@@ -1,0 +1,202 @@
+black porn
+config t
+NO ip access-list standard NOPORN
+ip access-list standard NOPORN
+DENY 66.254.0.0 0.0.255.255
+deny 161.49.0.0 0.0.255.255
+DENY 104.21.0.0 0.0.255.255
+DENY 68.235.0.0 0.0.255.255
+DENY 104.17.0.0 0.0.255.255
+DENY 88.208.0.0 0.0.255.255
+DENY 208.77.0.0 0.0.255.255
+DENY 172.67.0.0 0.0.255.255
+DENY 104.21.50.0 0.0.255.255
+Permit Any
+Int Gi 1
+ ip access-group NOPORN in
+end
+
+
+Black russian
+
+config t
+NO ip access-list standard NORUSSIA
+ip access-list standard NORUSSIA
+DENY 100.0.0.0 0.255.255.255
+deny 101.0.0 0.255.255.255
+DENY 102.0.0.0 0.255.255.255
+DENY 103.0.0.0 0.255.255.255
+DENY 103.0.0.0 0.255.255.255
+Permit Any
+Int Gi 1
+ ip access-group NOPORN in
+end
+
+
+Config t
+NO IP access-list Extended NGFW1
+IP access-list Extended NGFW1
+ Permit tcp Any host bet10.com eq 80 log
+ Permit tcp Any host bet10.com eq 443 log
+ Permit icmp Any host bet10.com log
+ Permit tcp Any host bet11.com eq 53 log
+ Permit tcp Any host bet11.com eq 443 log
+ Permit tcp Any host bet11.com eq 22 log
+ Int Gi 3
+  ip access-group NGFW1 in
+REMOVE FIREWALL:
+CONfig t
+ Int Gi 3
+  NO ip access-group NGFW1 in
+end
+
+
+
+Config t
+NO IP access-list Extended NGFW2
+IP access-list Extended NGFW1
+ Permit tcp Any host bet10.com eq 80 log
+ Permit tcp Any host bet10.com eq 53 log
+ Permit tcp Any host bet10.com eq 443 log
+ Permit tcp Any host bet11.com eq 443 log
+ Permit tcp Any host bet11.com eq 53 log
+ Permit tcp Any host bet11.com eq 80 log
+ Int Gi 3
+  ip access-group NGFW2 in
+REMOVE FIREWALL:
+CONfig t
+ Int Gi 3
+  NO ip access-group NGFW1 in
+end
+
+
+Config t
+NO IP access-list Extended NGFW3
+IP access-list Extended NGFW3
+ Permit tcp Any host bet10.com eq 2000 log
+ Permit tcp Any host bet10.com eq 5060 log
+ Permit tcp Any host bet10.com eq 1720 log
+ Permit tcp Any host bet11.com eq 443 log
+ Permit tcp Any host bet11.com eq 53 log
+ Permit tcp Any host bet11.com eq 80 log
+  Permit tcp Any host bet11.com eq 22 log
+ Int Gi 3
+  ip access-group NGFW3 in
+REMOVE FIREWALL:
+CONfig t
+ Int Gi 3
+  NO ip access-group NGFW1 in
+end
+
+
+
+Config t
+NO IP access-list Extended NGFW4
+IP access-list Extended NGFW4
+ Permit tcp Any host bet10.com eq 443 log
+ Permit tcp Any host bet11.com eq 443 log
+ Int Gi 3
+  ip access-group NGFW4 in
+REMOVE FIREWALL:
+CONfig t
+ Int Gi 3
+  NO ip access-group NGFW1 in
+end
+
+
+Config t
+NO IP access-list Extended NGFW5
+IP access-list Extended NGFW5
+ Permit tcp Any host bet10.com eq 23 log
+ Permit tcp Any host bet10.com eq 22 log
+  Permit tcp Any host bet10.com eq 80 log
+   Permit tcp Any host bet11.com eq 22 log
+    Permit tcp Any host bet11.com eq 443 log
+ Int Gi 3
+  ip access-group NGFW5 in
+REMOVE FIREWALL:
+CONfig t
+ Int Gi 3
+  NO ip access-group NGFW1 in
+end
+
+
+
+
+
+
+
+
+
+
+
+import cli
+
+cmd2 = '''hostname MATCHALATTE
+int loop 7
+ip add 7.7.7.7 255.255.255.255
+int loop 8
+ip add 8.8.8.8 255.255.255.255
+int loop 9
+ip add 9.9.9.9 255.255.255.255
+end
+'''
+cli.configurep(cmd2)
+
+
+
+
+Sun/Monday
+create FW policy NGFW6
+Bet10.com dns, http, https
+Bet11.com telnet, ssh
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
