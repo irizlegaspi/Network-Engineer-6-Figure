@@ -114,6 +114,8 @@ ACL-LAB(config)#ip http access-class ipv4 ?
 
 
 
+! To intentionally hack our devices lets open some ports and temporary remove our created ACL
+
 
 
 
