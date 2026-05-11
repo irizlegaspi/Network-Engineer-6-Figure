@@ -73,16 +73,6 @@ PORT    STATE SERVICE
 443/tcp open  https
 
 
-conf t
-service finger
-service dhcp
-service tcp-small-servers
-service udp-small-servers
-ip dns server
-telephony-service
-ip http server
-ip http secure-server
-
 
 TASK 3:
 Create standard access-list to allow telnet via gi1 management port to avoid telnet the gi2 and gi3
@@ -100,6 +90,23 @@ line vty 0 14
 exit
 !
 ip http access-class ipv4 INT-Gi1
+!
+
+conf t
+ip access-list extended deny-ACL
+ Deny tcp Any host 192.168.139.12 eq 22 log
+ Deny tcp Any host 192.168.139.12 eq 80 log
+ Deny tcp Any host 192.168.175.12 eq 22 log
+ Deny tcp Any host 192.168.75.12 eq 80 log
+
+
+
+line vty 0 14
+ access-class INT-Gi1 in
+exit
+
+
+
 
 ```````````
 ACL-LAB(config)#ip http access-class ?      
@@ -114,30 +121,144 @@ ACL-LAB(config)#ip http access-class ipv4 ?
 
 
 
-! To intentionally hack our devices lets open some ports and temporary remove our created ACL
+! To intentionally hack our devices lets open extra ports and temporary remove our created ACL
+! remove the Access -List
+conf t
+ no ip http access-class ipv4 INT-Gi1
+ line vty 0 14
+  no access-class INT-Gi1 in
+exit
+!
+conf t
+service finger
+service dhcp
+service tcp-small-servers
+service udp-small-servers
+ip dns server
+telephony-service
+ip http server
+ip http secure-server
 
 
 
 
+TASK 4: Make the ACLLAB be a web and secure web 
+``````
+int gi2  192.168.75.12 /24
+int gi3  192.168.139.12 /24
+``````
+Exercise 1:
+For 192.168.75.12 will only allow web and secure web
+For 192.168.139.12 will only allow ssh dns, icmp
+RULE:
+Protocol + hacker + victim + port (if needed)
 
+Use extended ACL
+conf t
+access-list 100 permit tcp any host 192.168.75.12 eq 80
+access-list 100 permit tcp any host 192.168.75.12 eq 443
+! int gi3 192.168.139.12
+access-list 101 permit tcp any host 192.168.139.12 eq 22
+access-list 101 permit tcp any host 192.168.139.12 eq 53
+access-list 101 permit icmp any host 192.168.139.12
+exit
 
+! Apply to interfaces
+int gi 2
+ ip access-group 100 in
+exit
+!
+int gi 3
+  ip access-group 101 in
+exit
 
+NAMED EXTENDED ACL:
+-----------------------
+conf t
+ip access-list extended FW1
+permit tcp any host 192.168.75.12 eq 80
+permit tcp any host 192.168.75.12 eq 443
+!
+ip access-list extended FW2
+permit tcp any host 192.168.139.12 eq 22
+permit tcp any host 192.168.139.12 eq 53
+permit icmp any host 192.168.139.12
+exit
+!
+! apply to interface
+conf t
+int gi 2
+ ip access-group FW1 in
+exit
+!
+int gi 3
+  ip access-group FW2 in
+exit
 
+```````````````
+Reference:
+PORT    STATE SERVICE
+7/tcp   open  echo
+9/tcp   open  discard
+13/tcp  open  daytime
+19/tcp  open  chargen
+22/tcp  open  ssh
+23/tcp  open  telnet
+53/tcp  open  domain
+79/tcp  open  finger
+80/tcp  open  http
+443/tcp open  https
+````````````````````````````
 
-TASK 4: Make the ACLLAB be a web and secure web routers
+Exercise 2:
+For gi2 192.168.75.12 allow ping, telnet, dns, web
+For gi3 192.168.139.12 allow ssh, daytime, chargen, https (secure web)
 
+! Remove the previous ACL
+conf t
+ no ip access-list extended FW1
+ no ip access-list extended FW2
+!
+ no ip access-list extended 100
+ no ip access-list extended 101
 
+! remove from int gi 2 and gi 3 
+int gi 2
+ no ip access-group FW1 in
+exit
+!
+int gi 3
+ no ip access-group FW2 in
 
+Configure new ACL
+For gi2 192.168.75.12 allow ping, telnet, dns, web
+For gi3 192.168.139.12 allow ssh, daytime, chargen, https (secure web)
 
-
-
-
-
-
-
-
-
-
+! Use NAME EXTEBDED ACL
+conf t
+ip access-list extended EXE2-FW2
+ permit icmp any host 192.168.75.12
+ permit tcp any host 192.168.75.12 eq 23
+ permit tcp any host 192.168.75.12 eq 53
+ permit tcp any host 192.168.75.12 eq 80
+exit
+!
+ip access-list extended EXE2-FW3
+ permit tcp any host 192.168.139.12 eq 22
+ permit tcp any host 192.168.139.12 eq 13
+ permit tcp any host 192.168.139.12 eq 19
+ permit tcp any host 192.168.139.12 eq 443
+exit
+!
+! apply to interface
+!
+int gi 2
+ ip access-group EXE2-FW2 in
+exit
+!
+int gi 3
+  ip access-group EXE2-FW3 in
+exit
 
 
 
