@@ -1,1 +1,143 @@
+1st vid: https://www.youtube.com/watch?v=4vbLPZ30ZLY
+2nd Vid: https://www.youtube.com/watch?v=9qbFVMFMiq0
+
+TASK 1:
+post install commands:
+
+@ACL-LAB Router
+conf t
+int gi1
+no shut
+ip add dhcp
+! 192.168.182.129 /
+exit
+!
+int gi2
+no shut
+ip add dhcp
+! 192.168.75.128 /24
+end
+!
+int gi3
+no shut
+ip add dhcp
+! 192.168.139.128 /24
+end
+!
+sh ip int br
+
+``````
+DHCP generated
+int gi1  192.168.182.129 /24
+int gi2  192.168.75.128 /24
+int gi3  192.168.139.128 /24
+`````````
+Manual generated
+int gi2  192.168.75.12 /24
+int gi3  192.168.139.12 /24
+``````
+
+
+Note: we need the gi1 : bec. that is the management IP
+
+! Make the interface Gi2 Static because this will be block by the ACL
+conf t
+int gi2
+ip address 192.168.75.12 255.255.255.0
+exit
+!
+int gi2
+ip address 192.168.139.12 255.255.255.0
+exit
+sh ip int br
+
+TASK 2: 
+We need to make our ACL-LAB, so as we learn how to protect just as we learn in class
+How to make cisco super hackable - opening unnecessary port /services
+
+! Run NMAP at cmd
+! To see the open ports
+
+open cmd
+type nmap -v 192.168.75.128
+PORT    STATE SERVICE
+22/tcp  open  ssh
+80/tcp  open  http
+443/tcp open  https
+
+open another cmd
+type nmap -v 192.168.139.12
+PORT    STATE SERVICE
+22/tcp  open  ssh
+80/tcp  open  http
+443/tcp open  https
+
+
+conf t
+service finger
+service dhcp
+service tcp-small-servers
+service udp-small-servers
+ip dns server
+telephony-service
+ip http server
+ip http secure-server
+
+
+TASK 3:
+Create standard access-list to allow telnet via gi1 management port to avoid telnet the gi2 and gi3
+
+@int gi 1
+conf t
+ip access-list standard INT-Gi1
+ permit 192.168.182.0 0.0.0.255
+exit
+!
+! apply on the interface
+!
+line vty 0 14
+ access-class INT-Gi1 in
+exit
+!
+ip http access-class ipv4 INT-Gi1
+
+```````````
+ACL-LAB(config)#ip http access-class ?      
+  <1-99>  Access list number
+  ipv4    Restrict http server access by ipv4 access-class
+  ipv6    Restrict http server access by ipv6 access-class
+
+ACL-LAB(config)#ip http access-class ipv4 ?
+  <1-99>  IPV4 Access list number
+  WORD    IPv4 Access list name
+``````````````````````
+
+
+
+
+
+
+
+
+
+
+
+TASK 4: Make the ACLLAB be a web and secure web routers
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
