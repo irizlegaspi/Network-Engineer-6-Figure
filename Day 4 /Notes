@@ -17,7 +17,7 @@ Int Gi 1
 end
 
 
-Black russian
+Block russian
 
 config t
 NO ip access-list standard NORUSSIA
