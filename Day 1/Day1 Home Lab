@@ -49,9 +49,9 @@ conf t
 
 
 
-==================================================
-2. Configure P1 and P2 as DHCP Client for their VLANS
-==================================================
+============================================================
+2. Configure A1 and A2 Port as DHCP Client for their VLANS
+===========================================================
 
 Verify on A1 before they can get their IP at DHCP Server
 # sh vlan br
@@ -68,9 +68,6 @@ conf t
   end
 
 Verify: # sh vlan br
-
-
-
 
 ----------
 A2 
