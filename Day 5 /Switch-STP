@@ -1,1 +1,10 @@
+Cisco Switching Protocols
+                      
+1. 802.1Q - Trunking - "Qpid" - tagging of vlan, untagged vlan goes to VLAN 1
+2. 802.1d - STP      - "Darna"
+3. 802.1w - RSTP     - "Wonderwoman"
+4. 802.1s - MSTP     - "Superman" - Multiple STP
+5. 802.1x - Port Security - "X-Men"
+
+
 
